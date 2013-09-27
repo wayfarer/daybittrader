@@ -1,0 +1,7 @@
+MySQL-python
+South
+django>=1.5,<1.5.99
+django-celery
+redis
+coinbase
+django-bootstrap-form

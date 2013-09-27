@@ -1,0 +1,74 @@
+# Temporary python files
+*.pyc
+*.pyo
+
+# Database related
+*.db
+*.sqlite3
+
+# Created by git diff program
+*.ORIG
+*.BASE.*
+*.BACKUP.*
+*.LOCAL.*
+*.REMOTE.*
+
+########################################################################
+# Aptana IDE settings
+########################################################################
+.pydevproject
+.project
+.settings/*
+
+########################################################################
+# Sphinx
+########################################################################
+docs/_build/*
+docs/_static/*
+docs/_templates/*
+
+########################################################################
+# Project specific
+########################################################################
+
+# Files created by celery
+*/celerybeat-schedule
+
+./*/logs/
+./*/downloads/
+*.log
+*.tgx
+*.tar.gz
+*.gz
+*.tar
+*.svn
+temp
+tmp
+ve/
+wsgi/
+ENV/
+*~
+*.bak
+*.orig
+*.BACKUP.*
+*.BASE.*
+*.REMOTE.*
+*.old
+*.LOCAL.*
+.DS_Store
+*.sav
+*.tmp
+dist/
+version
+video_data
+*/*/media/raw*
+/.settings/*
+*/assets/buckets/input/*
+*/assets/buckets/output/*
+.settings/*
+.pydev*
+.project
+nbproject/
+.project
+.pydevproject
+/.settings/org.eclipse.core.resources.prefs

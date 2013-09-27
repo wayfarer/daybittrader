@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{% block title %}Day Bit Trader{% endblock title %}</title>
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="{{ STATIC_URL }}css/master.css" rel="stylesheet">
+
+<!-- Le HTML5 shim -->
+<!--[if lt IE 9]>
+  <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Le fav and touch icons -->
+<link rel="shortcut icon" href="{{ STATIC_URL }}images/favicon.ico">
+<!--<link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ STATIC_URL }}bootstrap/ico/apple-touch-icon-114-precomposed.png">
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ STATIC_URL }}bootstrap/ico/apple-touch-icon-72-precomposed.png">
+<link rel="apple-touch-icon-precomposed" href="{{ STATIC_URL }}bootstrap/ico/apple-touch-icon-57-precomposed.png">-->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+{% block head %}{% endblock head %}
+</head>
+<body>
+	
+<header>
+	<nav class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+					<span class="sr-only">Toggle navigation</span>
+				    <span class="icon-bar"></span>
+				    <span class="icon-bar"></span>
+				    <span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/"><span id="day">Day</span><span id="B"><span>B</span><img src="{{ STATIC_URL }}images/dbt-logo.png"></span>itTrader</a>
+			</div>
+	
+			<div class="collapse navbar-collapse navbar-ex1-collapse">
+				<div class="navbar-right">
+					<ul class="nav navbar-nav">
+						<li><a href="/historical/">Historical Data</a></li>
+						{% if request.user.is_authenticated %}
+						<li class="dropdown">
+							<a href="#" class="navbar-link dropdown-toggle" data-toggle="dropdown">Account <b class="caret caret-inverse"></b></a>
+							<ul class="dropdown-menu pull-right">
+								<li><a href="/logout/">Log out  <span class="glyphicon glyphicon-log-out"></span></a></li>
+							</ul>
+						</li>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+
+		</div>
+	</nav>
+</header>
+	
+<div class="container" id="wrapper">
+	<div class="row">
+		{% block body %}{% endblock body %}
+	</div>
+</div>
+
+<script src="{{ STATIC_URL }}js/common.js"></script>
+{% block bottom %}{% endblock bottom %}
+</body>
+</html>

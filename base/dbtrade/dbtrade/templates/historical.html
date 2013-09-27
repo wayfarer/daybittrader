@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load bootstrap %}
+
+{% block head %}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script>google.load("visualization", "1", {packages:["corechart"]});</script>
+{% endblock head %}
+
+{% block body %}
+
+<div class="col-md-12" id="history-chart" style="height: 300px;"></div>
+<div class="col-md-12" id="daily-chart" style="height: 300px;"></div>
+
+				
+{% endblock body %}
+
+{% block bottom %}
+<script>
+	$(document).ready(function() {
+		var data_arr = [['Date', 'Buy Cost, Market A (50)', 'Sell Price, Market B (50)', 'Potential Profit']];
+		{% for data in ticker_data.data %}data_arr.push(['{{ data.date|date:"m-d H:i" }}',
+		{{ data.buy_price }}, {{ data.sell_price }}, {{ data.profit }}]);{% endfor %}
+		var data = google.visualization.arrayToDataTable(data_arr);
+
+        var options = {
+        	title: 'Historical Bitcoin Market Comparative Data (Last {{ ticker_data.total }} Days)',
+        	hAxis: {title: 'Date', titleTextStyle: {color: 'red'}}
+        };
+
+        var chart = new google.visualization.ColumnChart(document.getElementById('history-chart'));
+        chart.draw(data, options);
+        
+        var data_arr = [['Date', 'Buy Cost, Market A (50)', 'Sell Price, Market B (50)', 'Potential Profit']];
+		{% for data in daily_ticker_data.data %}data_arr.push(['{{ data.date|date:"H:i" }}',
+		{{ data.buy_price }}, {{ data.sell_price }}, {{ data.profit }}]);{% endfor %}
+		var data = google.visualization.arrayToDataTable(data_arr);
+
+        var options = {
+        	title: 'Daily Fluctuation (Today)',
+        	hAxis: {title: 'Time', titleTextStyle: {color: 'red'}}
+        };
+
+        var chart2 = new google.visualization.LineChart(document.getElementById('daily-chart'));
+        chart2.draw(data, options);
+	});
+</script>
+{% endblock bottom %}

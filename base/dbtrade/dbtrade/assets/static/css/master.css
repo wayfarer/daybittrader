@@ -1,0 +1,40 @@
+
+#wrapper {
+	margin-top: 80px;
+}
+
+.navbar-inverse {
+	background: #121212;
+	/*border-bottom: 30px solid #2059cb;*/
+	border-bottom: 30px solid #98b9fb;
+}
+
+.navbar-right {
+	text-align: right;
+}
+
+#day {
+	font-size: 25px;
+}
+
+#B {
+	position: relative;
+	padding: 0 25px;
+}
+
+#B span {
+	display: none;
+}
+
+#B img {
+	position: absolute;
+	top: -14px;
+	left: 50%;
+	margin-left: -25px;
+}
+
+#login-form {
+	padding-top: 100px;
+}
+
+#history-chart {}
