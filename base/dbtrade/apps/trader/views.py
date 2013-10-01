@@ -15,7 +15,7 @@ from dbtrade.apps.trader.models import TickerHistory
 
 
 def home(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         return HttpResponseRedirect('/historical/')
     env={}
     return auth_login(request, template_name='home.html', extra_context=env)
