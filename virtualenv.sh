@@ -8,4 +8,4 @@ virtualenv ../ve
 
 easy_install -U distribute
 
-pip install -E ../ve -I -r requirements.txt
+pip install -I -r requirements.txt
