@@ -25,6 +25,7 @@ def logout(request):
     return auth_logout(request, next_page="/")
 
 
+@login_required
 def historical(request):
     
     days_limit = 15
