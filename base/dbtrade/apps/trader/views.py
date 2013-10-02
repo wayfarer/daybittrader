@@ -63,9 +63,10 @@ def historical(request):
     #return HttpResponse(str(ticker_data))
     
     today = datetime.today()
-    today_baseline = datetime(today.year, today.month, today.day)
+    #today_baseline = datetime(today.year, today.month, today.day)
+    last_day_baseline = today - timedelta(days=1)
     daily_ticker_queryset = TickerHistory.objects.filter(id__gte=settings.CB_STARTING_ID,
-                                                         date_added__gte=today_baseline).exclude(cb_buy_value=None)
+                                                         date_added__gte=last_day_baseline).exclude(cb_buy_value=None)
     daily_ticker_queryset = daily_ticker_queryset.order_by('date_added').reverse()
     
     daily_ticker_data = []
