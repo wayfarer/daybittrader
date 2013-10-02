@@ -34,8 +34,6 @@ docs/_templates/*
 # Files created by celery
 */celerybeat-schedule
 
-./*/logs/
-./*/downloads/
 *.log
 *.tgx
 *.tar.gz
@@ -60,11 +58,7 @@ ENV/
 *.tmp
 dist/
 version
-video_data
-*/*/media/raw*
 /.settings/*
-*/assets/buckets/input/*
-*/assets/buckets/output/*
 .settings/*
 .pydev*
 .project
