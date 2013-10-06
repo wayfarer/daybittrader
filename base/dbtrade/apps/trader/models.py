@@ -45,6 +45,13 @@ class TickerHistory(LogModel):
     cb_buy_value = models.DecimalField(max_digits=12, decimal_places=5, null=True)
     cb_buy_value_50 = models.DecimalField(max_digits=12, decimal_places=5, null=True)
     
+    bs_ask = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+    bs_bid = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+    bs_high = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+    bs_last = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+    bs_low = models.DecimalField(max_digits=12, decimal_places=2, null=True)
+    bs_volume = models.DecimalField(max_digits=18, decimal_places=8, null=True)
+    
     mtgox_timestamp = models.CharField(max_length=100)
     
     

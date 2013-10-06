@@ -142,3 +142,15 @@ class MtGoxAPI(object):
     
 class CoinBaseAPI(CoinbaseAccount):
     pass
+
+
+def get_bitstamp_ticker():
+    """Super simple function that returns Bitstamp ticker info from public API"""
+    request_uri = 'https://www.bitstamp.net/api/ticker/'
+    post_data = ''
+    header = {
+              'User-Agent': 'Day-BitTrader',
+              }
+    json_data = urllib2.urlopen(urllib2.Request(request_uri, post_data, header), post_data).read()
+    return json.loads(json_data)
+

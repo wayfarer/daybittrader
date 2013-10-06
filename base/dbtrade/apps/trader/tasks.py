@@ -10,6 +10,7 @@ from celery.task.schedules import crontab
 from dbtrade.apps.trader.models import TickerHistory
 from dbtrade.apps.trader.utils.my_api_client import API, CB_API
 from dbtrade.apps.trader.utils.utils import auto_trade
+from dbtrade.utils.apiclient import get_bitstamp_ticker
 
 
 @task(ignore_results=True, name='dbtrade.apps.trader.tasks.trader')
@@ -25,6 +26,7 @@ def ticker_save(*args, **kwargs):
         ticker_data = res['data']
         cb_buy_value = CB_API.buy_price(1)
         cb_buy_value_50 = CB_API.buy_price(50)
+        bs_ticker = get_bitstamp_ticker()
         print 'Saving ticker data!'
         #print ticker_data
         ticker_history = TickerHistory(volume=Decimal(ticker_data['vol']['value']),
@@ -44,6 +46,12 @@ def ticker_save(*args, **kwargs):
                                        buy_value_int=int(ticker_data['buy']['value_int']),
                                        cb_buy_value=cb_buy_value,
                                        cb_buy_value_50=cb_buy_value_50,
+                                       bs_ask = bs_ticker['ask'],
+                                       bs_bid = bs_ticker['bid'],
+                                       bs_high = bs_ticker['high'],
+                                       bs_last = bs_ticker['last'],
+                                       bs_low = bs_ticker['low'],
+                                       bs_volume = bs_ticker['volume'],
                                        mtgox_timestamp=ticker_data['now'],
                                        )
         ticker_history.save()
