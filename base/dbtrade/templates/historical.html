@@ -10,6 +10,7 @@
 
 <div class="col-md-12" id="history-chart" style="height: 300px;"></div>
 <div class="col-md-12" id="daily-chart" style="height: 300px;"></div>
+<div class="col-md-12" id="a-c-chart" style="height: 300px;"></div>
 
 				
 {% endblock body %}
@@ -42,6 +43,19 @@
 
         var chart2 = new google.visualization.LineChart(document.getElementById('daily-chart'));
         chart2.draw(data, options);
+        
+        var data_arr = [['Date', 'Buy Price, Market A (50)', 'Ask Price, Market C (50)']];
+		{% for data in cb_bs_ticker_data.data %}data_arr.push(['{{ data.date|date:"H:i" }}',
+		{{ data.cb_buy_price }}, {{ data.bs_ask_price }}]);{% endfor %}
+		var data = google.visualization.arrayToDataTable(data_arr);
+        
+        var options = {
+        	title: 'Market A, Market C Comparison (Last 24 hours)',
+        	hAxis: {title: 'Time', titleTextStyle: {color: 'red'}}
+        };
+
+        var chart3 = new google.visualization.LineChart(document.getElementById('a-c-chart'));
+        chart3.draw(data, options);
 	});
 </script>
 {% endblock bottom %}

@@ -70,6 +70,7 @@ def historical(request):
     daily_ticker_queryset = daily_ticker_queryset.order_by('date_added').reverse()
     
     daily_ticker_data = []
+    cb_bs_ticker_data = []
 
     for ticker in daily_ticker_queryset:
         data = {
@@ -80,6 +81,13 @@ def historical(request):
                 'profit': (ticker.sell_value * 50) - ticker.cb_buy_value_50
                 }
         daily_ticker_data.append(data)
+        cb_bs_data = {
+                      'date': ticker.date_added,
+                      'cb_buy_price': ticker.cb_buy_value_50,
+                      'bs_ask_price': ticker.bs_ask * 50,
+                      'bs_bid_price': ticker.bs_bid * 50
+                      }
+        cb_bs_ticker_data.append(cb_bs_data)
         
     daily_ticker_data.reverse()
         
@@ -87,9 +95,14 @@ def historical(request):
                          'total': len(daily_ticker_data),
                          'data': daily_ticker_data
                          }
+    cb_bs_ticker_data = {
+                         'total': len(cb_bs_ticker_data),
+                         'data': cb_bs_ticker_data
+                         }
     
     env = {
            'ticker_data': ticker_data,
-           'daily_ticker_data': daily_ticker_data
+           'daily_ticker_data': daily_ticker_data,
+           'cb_bs_ticker_data': cb_bs_ticker_data
            }
     return render_to_response('historical.html', RequestContext(request, env))
