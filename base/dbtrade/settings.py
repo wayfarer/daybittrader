@@ -169,6 +169,8 @@ LOGGING = {
     }
 }
 
+LOGIN_URL = '/'
+
 #: celery
 import djcelery
 djcelery.setup_loader()
