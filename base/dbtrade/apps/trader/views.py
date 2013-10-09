@@ -6,7 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import Context, RequestContext
-#from django import forms
+from django import forms
 #from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import login as auth_login, logout as auth_logout
@@ -25,8 +25,43 @@ def logout(request):
     return auth_logout(request, next_page="/")
 
 
+fee_defaults = {
+                'foreign_wire_fee': Decimal('20.5'),
+                'domestic_wire_fee': Decimal('45'),
+                'fee_schedule': Decimal('0.6')
+                }
+
+
+class FeeSelector(forms.Form):
+    foreign_wire_fee = forms.DecimalField(initial=fee_defaults['foreign_wire_fee'])
+    domestic_wire_fee = forms.DecimalField(initial=fee_defaults['domestic_wire_fee'])
+    fee_schedule = forms.DecimalField(initial=fee_defaults['fee_schedule'])
+
+
 @login_required
 def historical(request):
+    
+    fields_set = False
+    for field in fee_defaults:
+        if field in request.GET:
+            fields_set = True
+            
+    foreign_wire_fee = fee_defaults['foreign_wire_fee']
+    domestic_wire_fee = fee_defaults['domestic_wire_fee']
+    fee_schedule = fee_defaults['fee_schedule']
+            
+    if fields_set:
+        form = FeeSelector(request.GET)
+    else:
+        form = FeeSelector()
+    
+    if form.is_valid():
+        cleaned_data = form.clean()
+        foreign_wire_fee = cleaned_data['foreign_wire_fee']
+        domestic_wire_fee = cleaned_data['domestic_wire_fee']
+        fee_schedule = cleaned_data['fee_schedule']
+        
+    fee_schedule_multiplier = (Decimal('100') - Decimal(str(fee_schedule))) / Decimal('100')
     
     days_limit = 15
     
@@ -42,12 +77,14 @@ def historical(request):
             continue
         total_dates += 1
         last_date = current_date
+        sell_price = Decimal(str(((ticker.sell_value * 50) - foreign_wire_fee - domestic_wire_fee)))
+        sell_price *= fee_schedule_multiplier
         data = {
                 'id': ticker.id,
                 'date': ticker.date_added,
-                'sell_price': ticker.sell_value * 50,
+                'sell_price': sell_price,
                 'buy_price': ticker.cb_buy_value_50,
-                'profit': (ticker.sell_value * 50) - ticker.cb_buy_value_50
+                'profit': sell_price - ticker.cb_buy_value_50
                 }
         ticker_data.append(data)
         if total_dates == days_limit:
@@ -73,12 +110,14 @@ def historical(request):
     cb_bs_ticker_data = []
 
     for ticker in daily_ticker_queryset:
+        sell_price = Decimal(str(((ticker.sell_value * 50) - foreign_wire_fee - domestic_wire_fee)))
+        sell_price *= fee_schedule_multiplier
         data = {
                 'id': ticker.id,
                 'date': ticker.date_added,
-                'sell_price': ticker.sell_value * 50,
+                'sell_price': sell_price,
                 'buy_price': ticker.cb_buy_value_50,
-                'profit': (ticker.sell_value * 50) - ticker.cb_buy_value_50
+                'profit': sell_price - ticker.cb_buy_value_50
                 }
         daily_ticker_data.append(data)
         cb_bs_data = {
@@ -103,6 +142,7 @@ def historical(request):
     env = {
            'ticker_data': ticker_data,
            'daily_ticker_data': daily_ticker_data,
-           'cb_bs_ticker_data': cb_bs_ticker_data
+           'cb_bs_ticker_data': cb_bs_ticker_data,
+           'form': form
            }
     return render_to_response('historical.html', RequestContext(request, env))

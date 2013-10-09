@@ -8,6 +8,12 @@
 
 {% block body %}
 
+<div class="col-md-12" id="fee-selection">
+	<form action="">
+		{{ form|bootstrap }}
+		<p><input type="submit" value="Update" class="btn btn-large btn-primary"></p>
+	</form>
+</div>
 <div class="col-md-12" id="history-chart" style="height: 300px;"></div>
 <div class="col-md-12" id="daily-chart" style="height: 300px;"></div>
 <div class="col-md-12" id="a-c-chart" style="height: 300px;"></div>
