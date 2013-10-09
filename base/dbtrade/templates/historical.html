@@ -37,13 +37,13 @@
         var chart = new google.visualization.ColumnChart(document.getElementById('history-chart'));
         chart.draw(data, options);
         
-        var data_arr = [['Date', 'Buy Cost, Market A (50)', 'Sell Price, Market B (50)', 'Potential Profit']];
+        var data_arr = [['Date', 'Buy Cost, Market A (50)', 'Sell Price, Market B (50)']];
 		{% for data in daily_ticker_data.data %}data_arr.push(['{{ data.date|date:"H:i" }}',
-		{{ data.buy_price }}, {{ data.sell_price }}, {{ data.profit }}]);{% endfor %}
+		{{ data.buy_price }}, {{ data.sell_price }}]);{% endfor %}
 		var data = google.visualization.arrayToDataTable(data_arr);
 
         var options = {
-        	title: 'Daily Fluctuation (Last 24 hours)',
+        	title: 'Market A Market B Comparison (Last 24 hours)',
         	hAxis: {title: 'Time', titleTextStyle: {color: 'red'}}
         };
 
