@@ -26,6 +26,7 @@ def logout(request):
 
 
 fee_defaults = {
+                'business_days_delay': 2,
                 'foreign_wire_fee': Decimal('20.5'),
                 'domestic_wire_fee': Decimal('45'),
                 'fee_schedule': Decimal('0.6')
@@ -33,9 +34,27 @@ fee_defaults = {
 
 
 class FeeSelector(forms.Form):
+    business_days_delay = forms.IntegerField(initial=fee_defaults['business_days_delay'])
     foreign_wire_fee = forms.DecimalField(initial=fee_defaults['foreign_wire_fee'])
     domestic_wire_fee = forms.DecimalField(initial=fee_defaults['domestic_wire_fee'])
     fee_schedule = forms.DecimalField(initial=fee_defaults['fee_schedule'])
+    
+    
+def bus_days_ago(from_date, days_ago):
+    if not days_ago:
+        return from_date
+    true_business_days_delay = 0
+    weekday_count = 0
+    weekends = [5, 6]
+    while True:
+        true_business_days_delay += 1
+        weekday_test_day = from_date - timedelta(days=true_business_days_delay)
+        if weekday_test_day.weekday() not in weekends:
+            weekday_count += 1
+            if weekday_count == days_ago:
+                break
+            
+    return from_date - timedelta(days=true_business_days_delay)
 
 
 @login_required
@@ -45,7 +64,8 @@ def historical(request):
     for field in fee_defaults:
         if field in request.GET:
             fields_set = True
-            
+    
+    business_days_delay = fee_defaults['business_days_delay']
     foreign_wire_fee = fee_defaults['foreign_wire_fee']
     domestic_wire_fee = fee_defaults['domestic_wire_fee']
     fee_schedule = fee_defaults['fee_schedule']
@@ -57,6 +77,7 @@ def historical(request):
     
     if form.is_valid():
         cleaned_data = form.clean()
+        business_days_delay = cleaned_data['business_days_delay']
         foreign_wire_fee = cleaned_data['foreign_wire_fee']
         domestic_wire_fee = cleaned_data['domestic_wire_fee']
         fee_schedule = cleaned_data['fee_schedule']
@@ -79,12 +100,22 @@ def historical(request):
         last_date = current_date
         sell_price = Decimal(str(((ticker.sell_value * 50) - foreign_wire_fee - domestic_wire_fee)))
         sell_price *= fee_schedule_multiplier
+        
+        days_ago_limit = bus_days_ago(ticker.date_added, business_days_delay)
+        ticker_business_days_ago = TickerHistory.objects.filter(
+                                    date_added__gte=days_ago_limit).order_by('date_added')[:1]
+        profit = 0
+        buy_price = 0
+        for old_ticker in ticker_business_days_ago:
+            if old_ticker.cb_buy_value_50:
+                buy_price = old_ticker.cb_buy_value_50
+                profit = sell_price - buy_price
         data = {
                 'id': ticker.id,
                 'date': ticker.date_added,
                 'sell_price': sell_price,
-                'buy_price': ticker.cb_buy_value_50,
-                'profit': sell_price - ticker.cb_buy_value_50
+                'buy_price': buy_price,
+                'profit': profit
                 }
         ticker_data.append(data)
         if total_dates == days_limit:
