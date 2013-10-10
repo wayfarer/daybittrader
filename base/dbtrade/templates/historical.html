@@ -27,7 +27,7 @@
 <script>
 	$(document).ready(function() {
 		var data_arr = [['Date', 'Buy Cost, Market A (50)', 'Sell Price, Market B (50)', 'Potential Profit']];
-		{% for data in ticker_data.data %}data_arr.push(['{{ data.date|date:"m-d H:i" }}',
+		{% for data in ticker_data.data %}data_arr.push(['{{ data.date|date:"m-d" }}',
 		{{ data.buy_price }}, {{ data.sell_price }}, {{ data.profit }}]);{% endfor %}
 		var data = google.visualization.arrayToDataTable(data_arr);
 
