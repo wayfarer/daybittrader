@@ -37,4 +37,14 @@
 	padding-top: 100px;
 }
 
+#fee-selection {
+	padding: 22px;
+	line-height: 80%;
+}
+
+#fee-selection input {
+	padding: 3px 12px;
+	height: auto;
+}
+
 #history-chart {}
