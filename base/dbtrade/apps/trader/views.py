@@ -135,6 +135,7 @@ def historical(request):
     last_day_baseline = today - timedelta(days=1)
     daily_ticker_queryset = TickerHistory.objects.filter(id__gte=settings.CB_STARTING_ID,
                                                          date_added__gte=last_day_baseline).exclude(cb_buy_value=None)
+    #: We go through results in reverse order so that the first record for each day is most recent data:
     daily_ticker_queryset = daily_ticker_queryset.order_by('date_added').reverse()
     
     daily_ticker_data = []
@@ -160,11 +161,12 @@ def historical(request):
         cb_bs_ticker_data.append(cb_bs_data)
         
     daily_ticker_data.reverse()
-        
     daily_ticker_data = {
                          'total': len(daily_ticker_data),
                          'data': daily_ticker_data
                          }
+    
+    cb_bs_ticker_data.reverse()
     cb_bs_ticker_data = {
                          'total': len(cb_bs_ticker_data),
                          'data': cb_bs_ticker_data
