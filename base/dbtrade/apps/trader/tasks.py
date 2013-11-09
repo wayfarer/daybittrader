@@ -27,6 +27,7 @@ def ticker_save(*args, **kwargs):
         cb_buy_value = CB_API.buy_price(1)
         cb_buy_value_50 = CB_API.buy_price(50)
         bs_ticker = get_bitstamp_ticker()
+        print 'bs_ticker= %s' % str(bs_ticker)
         print 'Saving ticker data!'
         #print ticker_data
         ticker_history = TickerHistory(volume=Decimal(ticker_data['vol']['value']),
