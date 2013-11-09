@@ -151,7 +151,8 @@ def get_bitstamp_ticker():
     header = {
               'User-Agent': 'Day-BitTrader',
               }
-    json_data = urllib2.Request(request_uri, headers=header).read()
+    request = urllib2.Request(request_uri, headers=header)
+    json_data = urllib2.urlopen(request).read()
     #json_data = urllib2.urlopen(urllib2.Request(request_uri, post_data, header), post_data).read()
     return json.loads(json_data)
 
