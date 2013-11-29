@@ -15,7 +15,7 @@ from django.contrib.auth.views import login as auth_login, logout as auth_logout
 from dbtrade.apps.trader.models import TickerHistory
 
 
-@csrf_exempt()
+@csrf_exempt
 def access_fee(request):
     if request.method == 'POST':
         #: TODO: must have access code: ONE_TIME_ACCESS_FEE
