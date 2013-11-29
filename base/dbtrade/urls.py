@@ -10,7 +10,7 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'dbtrade.apps.trader.views.logout', name='logout'),
     url(r'^historical/$', 'dbtrade.apps.trader.views.historical', name='historical'),
     url(r'^about/$', 'dbtrade.apps.trader.views.about', name='about'),
-    url(r'^_callback/_access/_$', 'dbtrade.apps.trader.callback.access_fee')
+    url(r'^_callback/_access/_$', 'dbtrade.apps.trader.callback.access_fee'),
     # url(r'^dbtrade/', include('dbtrade.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
