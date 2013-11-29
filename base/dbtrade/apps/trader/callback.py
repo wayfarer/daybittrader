@@ -7,6 +7,7 @@ from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import Context, RequestContext
 from django import forms
+from django.views.decorators.csrf import csrf_exempt
 #from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import login as auth_login, logout as auth_logout
@@ -14,6 +15,7 @@ from django.contrib.auth.views import login as auth_login, logout as auth_logout
 from dbtrade.apps.trader.models import TickerHistory
 
 
+@csrf_exempt()
 def access_fee(request):
     if request.method == 'POST':
         #: TODO: must have access code: ONE_TIME_ACCESS_FEE
