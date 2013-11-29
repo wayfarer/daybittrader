@@ -14,13 +14,6 @@ from django.contrib.auth.views import login as auth_login, logout as auth_logout
 from dbtrade.apps.trader.models import TickerHistory
 
 
-def home(request):
-    if request.user.is_authenticated():
-        return HttpResponseRedirect('/historical/')
-    env={}
-    return auth_login(request, template_name='home.html', extra_context=env)
-
-
 def logout(request):
     return auth_logout(request, next_page="/")
 
@@ -29,7 +22,8 @@ fee_defaults = {
                 'business_days_delay': 2,
                 'foreign_wire_fee': Decimal('20.5'),
                 'domestic_wire_fee': Decimal('45'),
-                'fee_schedule': Decimal('0.6')
+                'fee_schedule': Decimal('0.6'),
+                'increment': 50
                 }
 
 
@@ -38,7 +32,15 @@ class FeeSelector(forms.Form):
     foreign_wire_fee = forms.DecimalField(initial=fee_defaults['foreign_wire_fee'])
     domestic_wire_fee = forms.DecimalField(initial=fee_defaults['domestic_wire_fee'])
     fee_schedule = forms.DecimalField(initial=fee_defaults['fee_schedule'])
+    increment = forms.IntegerField(initial=fee_defaults['increment'])
+
     
+def home(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/historical/')
+    env={}
+    return auth_login(request, template_name='home.html', extra_context=env)
+
     
 def bus_days_ago(from_date, days_ago):
     if not days_ago:
@@ -69,6 +71,7 @@ def historical(request):
     foreign_wire_fee = fee_defaults['foreign_wire_fee']
     domestic_wire_fee = fee_defaults['domestic_wire_fee']
     fee_schedule = fee_defaults['fee_schedule']
+    increment = fee_defaults['increment']
             
     if fields_set:
         form = FeeSelector(request.GET)
@@ -81,6 +84,7 @@ def historical(request):
         foreign_wire_fee = cleaned_data['foreign_wire_fee']
         domestic_wire_fee = cleaned_data['domestic_wire_fee']
         fee_schedule = cleaned_data['fee_schedule']
+        increment = cleaned_data['increment']
         
     fee_schedule_multiplier = (Decimal('100') - Decimal(str(fee_schedule))) / Decimal('100')
     
@@ -98,7 +102,7 @@ def historical(request):
             continue
         total_dates += 1
         last_date = current_date
-        sell_price = Decimal(str(((ticker.sell_value * 50) - foreign_wire_fee - domestic_wire_fee)))
+        sell_price = Decimal(str(((ticker.sell_value * increment) - foreign_wire_fee - domestic_wire_fee)))
         sell_price *= fee_schedule_multiplier
         
         days_ago_limit = bus_days_ago(ticker.date_added, business_days_delay)
@@ -107,9 +111,14 @@ def historical(request):
         profit = 0
         buy_price = 0
         for old_ticker in ticker_business_days_ago:
-            if old_ticker.cb_buy_value_50:
+            #: Loops max of once
+            if increment == 50 and old_ticker.cb_buy_value_50:
                 buy_price = old_ticker.cb_buy_value_50
                 profit = sell_price - buy_price
+            elif old_ticker.cb_buy_value:
+                buy_price = old_ticker.cb_buy_value * increment
+                profit = sell_price - buy_price
+            #: Don't set profit if there's no buy data available.  Historical from test site data.
         data = {
                 'id': ticker.id,
                 'date': ticker.date_added,
@@ -176,6 +185,7 @@ def historical(request):
            'ticker_data': ticker_data,
            'daily_ticker_data': daily_ticker_data,
            'cb_bs_ticker_data': cb_bs_ticker_data,
+           'increment': increment,
            'form': form
            }
     return render_to_response('historical.html', RequestContext(request, env))

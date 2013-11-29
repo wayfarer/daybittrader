@@ -26,7 +26,7 @@
 {% block bottom %}
 <script>
 	$(document).ready(function() {
-		var data_arr = [['Date', 'Buy Cost, Market A (50)', 'Sell Price, Market B (50)', 'Potential Profit']];
+		var data_arr = [['Date', 'Buy Cost, Coinbase ({{ increment }})', 'Sell Price, MtGox ({{ increment }})', 'Potential Profit']];
 		{% for data in ticker_data.data %}data_arr.push(['{{ data.date|date:"m-d" }}',
 		{{ data.buy_price }}, {{ data.sell_price }}, {{ data.profit }}]);{% endfor %}
 		var data = google.visualization.arrayToDataTable(data_arr);
@@ -39,26 +39,26 @@
         var chart = new google.visualization.ColumnChart(document.getElementById('history-chart'));
         chart.draw(data, options);
         
-        var data_arr = [['Date', 'Buy Cost, Market A (50)', 'Sell Price, Market B (50)']];
+        var data_arr = [['Date', 'Buy Cost, Coinbase ({{ increment }})', 'Sell Price, MtGox ({{ increment }})']];
 		{% for data in daily_ticker_data.data %}data_arr.push(['{{ data.date|date:"H:i" }}',
 		{{ data.buy_price }}, {{ data.sell_price }}]);{% endfor %}
 		var data = google.visualization.arrayToDataTable(data_arr);
 
         var options = {
-        	title: 'Market A, Market B Comparison (Last 24 hours)',
+        	title: 'Coinbase - MtGox Comparison (Last 24 hours)',
         	hAxis: {title: 'Time', titleTextStyle: {color: 'red'}}
         };
 
         var chart2 = new google.visualization.LineChart(document.getElementById('daily-chart'));
         chart2.draw(data, options);
         
-        var data_arr = [['Date', 'Buy Price, Market A (50)', 'Ask Price, Market C (50)']];
+        var data_arr = [['Date', 'Buy Price, Coinbase ({{ increment }})', 'Ask Price, Bitstamp ({{ increment }})']];
 		{% for data in cb_bs_ticker_data.data %}data_arr.push(['{{ data.date|date:"H:i" }}',
 		{{ data.cb_buy_price }}, {{ data.bs_ask_price }}]);{% endfor %}
 		var data = google.visualization.arrayToDataTable(data_arr);
         
         var options = {
-        	title: 'Market A, Market C Comparison (Last 24 hours)',
+        	title: 'Coinbase - Bitstamp Comparison (Last 24 hours)',
         	hAxis: {title: 'Time', titleTextStyle: {color: 'red'}}
         };
 
