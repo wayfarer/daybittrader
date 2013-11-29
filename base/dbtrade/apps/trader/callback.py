@@ -19,5 +19,7 @@ def access_fee(request):
         #: TODO: must have access code: ONE_TIME_ACCESS_FEE
         with open('/tmp/last_request.txt') as f:
             f.write(str(request.body))
-    env = {}
-    return render_to_response('about.html', RequestContext(request, env))
+    
+    return HttpResponse('{"status": "ok"}', mimetype='application/json')
+    #env = {}
+    #return render_to_response('about.html', RequestContext(request, env))
