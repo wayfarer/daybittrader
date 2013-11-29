@@ -17,7 +17,7 @@ from dbtrade.apps.trader.models import TickerHistory
 def access_fee(request):
     if request.method == 'POST':
         #: TODO: must have access code: ONE_TIME_ACCESS_FEE
-        with open('/tmp/last_request.txt') as f:
+        with open('/tmp/last_request.txt', 'w') as f:
             f.write(str(request.body))
     
     return HttpResponse('{"status": "ok"}', mimetype='application/json')
