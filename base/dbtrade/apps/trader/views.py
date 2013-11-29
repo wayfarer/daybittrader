@@ -27,65 +27,21 @@ fee_defaults = {
                 }
 
 
+
+class FeeSelectorSimple(forms.Form):
+    fee_schedule = forms.DecimalField(initial=fee_defaults['fee_schedule'])
+
+
 class FeeSelector(forms.Form):
     business_days_delay = forms.IntegerField(initial=fee_defaults['business_days_delay'])
     foreign_wire_fee = forms.DecimalField(initial=fee_defaults['foreign_wire_fee'])
     domestic_wire_fee = forms.DecimalField(initial=fee_defaults['domestic_wire_fee'])
     fee_schedule = forms.DecimalField(initial=fee_defaults['fee_schedule'])
     increment = forms.IntegerField(initial=fee_defaults['increment'])
+    
 
+def _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fee_schedule, increment):
     
-def home(request):
-    if request.user.is_authenticated():
-        return HttpResponseRedirect('/historical/')
-    env={}
-    return auth_login(request, template_name='home.html', extra_context=env)
-
-    
-def bus_days_ago(from_date, days_ago):
-    if not days_ago:
-        return from_date
-    true_business_days_delay = 0
-    weekday_count = 0
-    weekends = [5, 6]
-    while True:
-        true_business_days_delay += 1
-        weekday_test_day = from_date - timedelta(days=true_business_days_delay)
-        if weekday_test_day.weekday() not in weekends:
-            weekday_count += 1
-            if weekday_count == days_ago:
-                break
-            
-    return from_date - timedelta(days=true_business_days_delay)
-
-
-@login_required
-def historical(request):
-    
-    fields_set = False
-    for field in fee_defaults:
-        if field in request.GET:
-            fields_set = True
-    
-    business_days_delay = fee_defaults['business_days_delay']
-    foreign_wire_fee = fee_defaults['foreign_wire_fee']
-    domestic_wire_fee = fee_defaults['domestic_wire_fee']
-    fee_schedule = fee_defaults['fee_schedule']
-    increment = fee_defaults['increment']
-            
-    if fields_set:
-        form = FeeSelector(request.GET)
-    else:
-        form = FeeSelector()
-    
-    if form.is_valid():
-        cleaned_data = form.clean()
-        business_days_delay = cleaned_data['business_days_delay']
-        foreign_wire_fee = cleaned_data['foreign_wire_fee']
-        domestic_wire_fee = cleaned_data['domestic_wire_fee']
-        fee_schedule = cleaned_data['fee_schedule']
-        increment = cleaned_data['increment']
-        
     fee_schedule_multiplier = (Decimal('100') - Decimal(str(fee_schedule))) / Decimal('100')
     
     days_limit = 15
@@ -151,21 +107,25 @@ def historical(request):
     cb_bs_ticker_data = []
 
     for ticker in daily_ticker_queryset:
-        sell_price = Decimal(str(((ticker.sell_value * 50) - foreign_wire_fee - domestic_wire_fee)))
+        sell_price = Decimal(str(((ticker.sell_value * increment) - foreign_wire_fee - domestic_wire_fee)))
         sell_price *= fee_schedule_multiplier
+        if increment == 50:
+            cb_buy_price = ticker.cb_buy_value_50
+        else:
+            cb_buy_price = ticker.cb_buy_value * increment
         data = {
                 'id': ticker.id,
                 'date': ticker.date_added,
                 'sell_price': sell_price,
-                'buy_price': ticker.cb_buy_value_50,
-                'profit': sell_price - ticker.cb_buy_value_50
+                'buy_price': cb_buy_price,
+                'profit': sell_price - cb_buy_price
                 }
         daily_ticker_data.append(data)
         cb_bs_data = {
                       'date': ticker.date_added,
-                      'cb_buy_price': ticker.cb_buy_value_50,
-                      'bs_ask_price': ticker.bs_ask * 50,
-                      'bs_bid_price': ticker.bs_bid * 50
+                      'cb_buy_price': cb_buy_price,
+                      'bs_ask_price': ticker.bs_ask * increment,
+                      'bs_bid_price': ticker.bs_bid * increment
                       }
         cb_bs_ticker_data.append(cb_bs_data)
         
@@ -186,6 +146,90 @@ def historical(request):
            'daily_ticker_data': daily_ticker_data,
            'cb_bs_ticker_data': cb_bs_ticker_data,
            'increment': increment,
-           'form': form
            }
+    return env
+
+    
+def home(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/historical/')
+    
+    fields_set = False
+    for field in fee_defaults:
+        if field in request.GET:
+            fields_set = True
+    
+    business_days_delay = 0
+    foreign_wire_fee = 0
+    domestic_wire_fee = 0
+    fee_schedule = fee_defaults['fee_schedule']
+    increment = 1
+    
+    if fields_set:
+        form = FeeSelectorSimple(request.GET)
+    else:
+        form = FeeSelectorSimple()
+    
+    if form.is_valid():
+        cleaned_data = form.clean()
+        fee_schedule = cleaned_data['fee_schedule']
+    
+    env = _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fee_schedule, increment)
+    env['feeform'] = form
+    env['profit_name'] = 'Difference'
+    return auth_login(request, template_name='home.html', extra_context=env)
+
+
+def about(request):
+    env = {}
+    return render_to_response('about.html', RequestContext(request, env))
+
+    
+def bus_days_ago(from_date, days_ago):
+    if not days_ago:
+        return from_date
+    true_business_days_delay = 0
+    weekday_count = 0
+    weekends = [5, 6]
+    while True:
+        true_business_days_delay += 1
+        weekday_test_day = from_date - timedelta(days=true_business_days_delay)
+        if weekday_test_day.weekday() not in weekends:
+            weekday_count += 1
+            if weekday_count == days_ago:
+                break
+            
+    return from_date - timedelta(days=true_business_days_delay)
+
+
+@login_required
+def historical(request):
+    
+    fields_set = False
+    for field in fee_defaults:
+        if field in request.GET:
+            fields_set = True
+    
+    business_days_delay = fee_defaults['business_days_delay']
+    foreign_wire_fee = fee_defaults['foreign_wire_fee']
+    domestic_wire_fee = fee_defaults['domestic_wire_fee']
+    fee_schedule = fee_defaults['fee_schedule']
+    increment = fee_defaults['increment']
+            
+    if fields_set:
+        form = FeeSelector(request.GET)
+    else:
+        form = FeeSelector()
+    
+    if form.is_valid():
+        cleaned_data = form.clean()
+        business_days_delay = cleaned_data['business_days_delay']
+        foreign_wire_fee = cleaned_data['foreign_wire_fee']
+        domestic_wire_fee = cleaned_data['domestic_wire_fee']
+        fee_schedule = cleaned_data['fee_schedule']
+        increment = cleaned_data['increment']
+        
+    env = _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fee_schedule, increment)
+    env['form'] = form
+    env['profit_name'] = 'Potential Profit'
     return render_to_response('historical.html', RequestContext(request, env))

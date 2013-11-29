@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     url(r'^$', 'dbtrade.apps.trader.views.home', name='home'),
     url(r'^logout/$', 'dbtrade.apps.trader.views.logout', name='logout'),
     url(r'^historical/$', 'dbtrade.apps.trader.views.historical', name='historical'),
+    url(r'^about/$', 'dbtrade.apps.trader.views.about', name='about'),
     # url(r'^dbtrade/', include('dbtrade.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
