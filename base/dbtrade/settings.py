@@ -14,13 +14,17 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+DEFAULT_DB_USER = 'dbtrade'
+DEFAULT_DB_PASSWORD = 'orange123'
+DEFAULT_DB_HOST = ''
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'dbtrade',
-        'USER': 'dbtrade',
-        'PASSWORD': 'orange123',
-        'HOST': '',
+        'USER': DEFAULT_DB_USER,
+        'PASSWORD': DEFAULT_DB_PASSWORD,
+        'HOST': DEFAULT_DB_HOST,
         'PORT': '',
     }
 }
@@ -171,6 +175,13 @@ LOGGING = {
 
 LOGIN_URL = '/'
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'dbt-maincache',
+    }
+}
+
 #: celery
 import djcelery
 djcelery.setup_loader()
@@ -189,4 +200,29 @@ CELERYD_PREFETCH_MULTIPLIER = 1
 #: App settings
 
 #: First pk in TickerHistory with CB data
+
 CB_STARTING_ID = 37602
+
+
+#: DO NOT EDIT BELOW THIS LINE!!
+#: ====================================================
+
+CONFIG = os.environ.get('DBT_SETTINGS_CONFIG', 'debug')
+
+config_module = "dbtrade.config"
+
+# import overrides
+overrides = __import__(
+    "config." + CONFIG,
+    globals(),
+    locals(),
+    [config_module]
+    )
+
+for attr in dir(overrides):
+    if attr.isupper():
+        globals()[attr] = getattr(overrides, attr)
+        
+DATABASES['default']['USER'] = DEFAULT_DB_USER
+DATABASES['default']['PASSWORD'] = DEFAULT_DB_PASSWORD
+DATABASES['default']['HOST'] = DEFAULT_DB_HOST
