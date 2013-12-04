@@ -173,10 +173,16 @@ def home(request):
     if form.is_valid():
         cleaned_data = form.clean()
         fee_schedule = cleaned_data['fee_schedule']
+        
+    most_recent_ticker_queryset = TickerHistory.objects.exclude(cb_buy_value=None).order_by('id').reverse()[:1]
+    most_recent_ticker = most_recent_ticker_queryset[0]
+    cost_1 = most_recent_ticker.cb_buy_value
+    usd_50 = (float(1) / cost_1) * 50
     
     env = _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fee_schedule, increment)
     env['feeform'] = form
     env['profit_name'] = 'Difference'
+    env['50_usd'] = '%.6f' % usd_50
     return auth_login(request, template_name='home.html', extra_context=env)
 
 
