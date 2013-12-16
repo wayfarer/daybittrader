@@ -10,6 +10,8 @@ from django import forms
 #from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import login as auth_login, logout as auth_logout
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 
 from dbtrade.apps.trader.models import TickerHistory
 
@@ -41,6 +43,14 @@ class FeeSelector(forms.Form):
     
 
 def _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fee_schedule, increment):
+    
+    cache_key = '_get_chart_data-%s-%s-%s-%s-%s' % (str(business_days_delay), str(foreign_wire_fee),
+                                                    str(domestic_wire_fee), str(fee_schedule), str(increment))
+    cached_val = cache.get(cache_key)
+    cache_len = 60 * 10
+    
+    if cached_val != None:
+        return cached_val
     
     fee_schedule_multiplier = (Decimal('100') - Decimal(str(fee_schedule))) / Decimal('100')
     
@@ -147,9 +157,10 @@ def _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fe
            'cb_bs_ticker_data': cb_bs_ticker_data,
            'increment': increment,
            }
+    cache.set(cache_key, env, cache_len)
     return env
 
-    
+
 def home(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/historical/')
