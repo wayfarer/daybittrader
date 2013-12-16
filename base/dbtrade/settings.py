@@ -5,7 +5,7 @@ import os
 ROOT_DIR = os.path.dirname(os.path.realpath(os.path.dirname(__file__)))
 CONFIG_ROOT_DIR = os.path.realpath(os.path.dirname(__file__))
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
