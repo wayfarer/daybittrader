@@ -53,8 +53,8 @@ class TickerHistory(LogModel):
     bs_volume = models.DecimalField(max_digits=18, decimal_places=8, null=True)
     
     mtgox_timestamp = models.CharField(max_length=100)
-    
-    
+
+
 class OrderRecord(TimeStampModel):
     
     #: Order OID, according to MtGox
@@ -76,3 +76,45 @@ class OrderRecord(TimeStampModel):
     
     #: If True, when this bid is made, it does not get replaced every 5 minutes.
     hold = models.BooleanField(default=False)
+
+
+class EmailNotice(TimeStampModel):
+    
+    #: Email address to send notifications to
+    email = models.EmailField(max_length=254)
+    
+    #: If price rises above this point, send notification
+    high_price_point = models.DecimalField(max_digits=12, decimal_places=5, db_index=True)
+    
+    #: If price falls below this point, send notification
+    low_price_point = models.DecimalField(max_digits=12, decimal_places=5, db_index=True)
+    
+    #: Market to use as price indicator. COINBASE, MTGOX, or BITSTAMP
+    market = models.CharField(max_length=32, db_index=True)
+    
+    #: How often to send notification: HOURLY, DAILY or WEEKLY
+    frequency = models.CharField(max_length=32)
+    
+    #: Maximum amount of times to send notifications
+    max_send = models.IntegerField(null=True)
+    
+    #: Whether to send notifications at all
+    active = models.BooleanField(default=True)
+
+
+class EmailNoticeLog(models.Model):
+    
+    #: Which notification email and settings
+    email_notice = models.ForeignKey(EmailNotice, null=True)
+    
+    #: HIGH or LOW
+    notice_type = models.CharField(max_length=32)
+    
+    #: Recorded price
+    price = models.DecimalField(max_digits=12, decimal_places=5)
+    
+    #: Market recorded price is from. COINBASE, MTGOX, or BITSTAMP.  Repeated here in case EmailNotice updated
+    market = models.CharField(max_length=32)
+    
+    #: We don't use LogModel, because we need to index this field for timedelta searches for frequency calculation
+    date_added = models.DateTimeField(auto_now_add=True, db_index=True)
