@@ -67,7 +67,6 @@ def ticker_save(*args, **kwargs):
         
 @task(ignore_results=True, name='dbtrade.apps.trader.tasks.email_notice')
 def email_notice(mtgox_price, coinbase_price, bitstamp_price):
-    now = datetime.now()
     timedeltas = {
                   'HOURLY': timedelta(hours=1),
                   'DAILY': timedelta(days=1),
@@ -75,26 +74,28 @@ def email_notice(mtgox_price, coinbase_price, bitstamp_price):
                   }
     for market in ['mtgox', 'coinbase', 'bitstamp']:
         for point in ['high', 'low']:
+            now = datetime.now()
             price = locals()['%s_price' % market]
             kwargs = {
                       'market': market.upper(),
                       '%s_price_point' % point: price,
                       'active': True
                       }
-            emails = EmailNotice.objects.filter(**kwargs)
+            universal_time_exclusion = now - timedeltas['HOURLY']
+            emails = EmailNotice.objects.filter(**kwargs).exclude(last_sent__gte=universal_time_exclusion)
             for email in emails:
-                max_date = now = timedeltas[email]
-                recent_logs = EmailNoticeLog.objects.filter(email_notice=email, date_added__gte=max_date)
+                max_date = now - timedeltas[email]
+                recent_logs = EmailNoticeLog.objects.filter(email_notice=email,date_added__gte=max_date)
                 recent_log = recent_logs.order_by('id').reverse()[:1]
                 try:
                     recent_log[0]
                 except IndexError:
-                    #: We have sent another email within the window
+                    #: We have sent another email within the window, we exclude DAILY and WEEKLY folks here
                     continue
                 if email.max_send != None and recent_logs.count() + 1 >= email.max_send:
                     email.active = False
                     email.save()
-                message = 'Your price notification was activated due to price of $%s\n' % price
+                message = 'Your price notification was activated due to price of $%s on %s\n' % (price, market)
                 #: TODO: add deactivate/edit link
                 send_mail(subject='Bitcoin price notification for %s' % str(now),
                           message=message, from_email='Bitcoin Notifications <%s>' % settings.EMAIL_HOST_USER,

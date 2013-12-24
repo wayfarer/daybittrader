@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 
 class TimeStampModel(models.Model):
     #: Date added
@@ -100,6 +101,9 @@ class EmailNotice(TimeStampModel):
     
     #: Whether to send notifications at all
     active = models.BooleanField(default=True)
+    
+    #: Last time email was sent.  For easy frequency selection
+    last_sent = models.DateTimeField(default=datetime(1970, 1, 1, 0, 0, 0, 0), db_index=True)
 
 
 class EmailNoticeLog(models.Model):
