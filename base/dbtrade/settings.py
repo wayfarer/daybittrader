@@ -203,6 +203,13 @@ CELERYD_PREFETCH_MULTIPLIER = 1
 
 CB_STARTING_ID = 37602
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'notifications@daybittrader.com'
+EMAIL_HOST_PASSWORD = 'kzQbED8HV6SC6wEHFK8R'
+EMAIL_USE_TLS = True
+
 
 #: DO NOT EDIT BELOW THIS LINE!!
 #: ====================================================

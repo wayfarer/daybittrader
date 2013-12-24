@@ -1,13 +1,16 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 #from datetime import datetime
 from decimal import Decimal
 from pprint import pprint
+
+from django.conf import settings
+from django.core.mail import send_mail
 
 from celery.task import task
 from celery.task import periodic_task
 from celery.task.schedules import crontab
 
-from dbtrade.apps.trader.models import TickerHistory
+from dbtrade.apps.trader.models import TickerHistory, EmailNotice, EmailNoticeLog
 from dbtrade.apps.trader.utils.my_api_client import API, CB_API
 from dbtrade.apps.trader.utils.utils import auto_trade
 from dbtrade.utils.apiclient import get_bitstamp_ticker
@@ -57,5 +60,43 @@ def ticker_save(*args, **kwargs):
                                        )
         ticker_history.save()
         trader.delay(ticker_history.id)
+        email_notice.delay(ticker_history.buy_value, ticker_history.cb_buy_value, ticker_history.bs_ask)
     else:
         print 'Ticker data result other than success: "%s"' % res['result']
+        
+        
+@task(ignore_results=True, name='dbtrade.apps.trader.tasks.email_notice')
+def email_notice(mtgox_price, coinbase_price, bitstamp_price):
+    now = datetime.now()
+    timedeltas = {
+                  'HOURLY': timedelta(hours=1),
+                  'DAILY': timedelta(days=1),
+                  'WEEKLY': timedelta(days=7)
+                  }
+    for market in ['mtgox', 'coinbase', 'bitstamp']:
+        for point in ['high', 'low']:
+            price = locals()['%s_price' % market]
+            kwargs = {
+                      'market': market.upper(),
+                      '%s_price_point' % point: price,
+                      'active': True
+                      }
+            emails = EmailNotice.objects.filter(**kwargs)
+            for email in emails:
+                max_date = now = timedeltas[email]
+                recent_logs = EmailNoticeLog.objects.filter(email_notice=email, date_added__gte=max_date)
+                recent_log = recent_logs.order_by('id').reverse()[:1]
+                try:
+                    recent_log[0]
+                except IndexError:
+                    #: We have sent another email within the window
+                    continue
+                if email.max_send != None and recent_logs.count() + 1 >= email.max_send:
+                    email.active = False
+                    email.save()
+                message = 'Your price notification was activated due to price of $%s\n' % price
+                #: TODO: add deactivate/edit link
+                send_mail(subject='Bitcoin price notification for %s' % str(now),
+                          message=message, from_email='Bitcoin Notifications <%s>' % settings.EMAIL_HOST_USER,
+                          recipient_list=[email.email])
+        
