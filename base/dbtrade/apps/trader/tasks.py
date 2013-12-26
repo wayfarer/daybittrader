@@ -95,9 +95,13 @@ def email_notice(mtgox_price, coinbase_price, bitstamp_price):
                 if email.max_send != None and recent_logs.count() + 1 >= email.max_send:
                     email.active = False
                     email.save()
-                message = 'Your price notification was activated due to price of $%s on %s\n' % (price, market)
-                #: TODO: add deactivate/edit link
-                send_mail(subject='Bitcoin price notification for %s' % str(now),
+                message = '%s\nYour price notification was activated due to price of $%s on %s.\n\n' % (str(now),
+                                                                                                        str(price),
+                                                                                                        market)
+                message += 'See latest charts at https://daybittrader.com/\n'
+                message += 'Edit or cancel this notification: https://daybittrader.com/notification/%s' % email.uuid
+                
+                send_mail(subject='Bitcoin price notification for %s ($%s)' % (str(now), str(price)),
                           message=message, from_email='Bitcoin Notifications <%s>' % settings.EMAIL_HOST_USER,
                           recipient_list=[email.email])
         

@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from datetime import datetime
 
@@ -81,6 +83,9 @@ class OrderRecord(TimeStampModel):
 
 class EmailNotice(TimeStampModel):
     
+    #: Unique identifier to allow administration of notification if you have the link
+    uuid = models.CharField(max_length=36, db_index=True, null=True)
+    
     #: Email address to send notifications to
     email = models.EmailField(max_length=254)
     
@@ -104,6 +109,12 @@ class EmailNotice(TimeStampModel):
     
     #: Last time email was sent.  For easy frequency selection
     last_sent = models.DateTimeField(default=datetime(1970, 1, 1, 0, 0, 0, 0), db_index=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.uuid:
+            self.uuid = uuid.uuid4()
+        
+        super(EmailNotice, self).save(*args, **kwargs)
 
 
 class EmailNoticeLog(models.Model):
