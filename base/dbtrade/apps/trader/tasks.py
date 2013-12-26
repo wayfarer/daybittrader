@@ -60,13 +60,17 @@ def ticker_save(*args, **kwargs):
                                        )
         ticker_history.save()
         trader.delay(ticker_history.id)
-        email_notice.delay(ticker_history.buy_value, ticker_history.cb_buy_value, ticker_history.bs_ask)
+        email_notice.delay(str(ticker_history.buy_value), str(ticker_history.cb_buy_value), str(ticker_history.bs_ask))
     else:
         print 'Ticker data result other than success: "%s"' % res['result']
         
         
 @task(ignore_results=True, name='dbtrade.apps.trader.tasks.email_notice')
 def email_notice(mtgox_price, coinbase_price, bitstamp_price):
+    mtgox_price = Decimal(mtgox_price)
+    coinbase_price = Decimal(coinbase_price)
+    bitstamp_price = Decimal(bitstamp_price)
+    
     timedeltas = {
                   'HOURLY': timedelta(hours=1),
                   'DAILY': timedelta(days=1),
