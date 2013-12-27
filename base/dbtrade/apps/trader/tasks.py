@@ -67,6 +67,10 @@ def ticker_save(*args, **kwargs):
         
 @task(ignore_results=True, name='dbtrade.apps.trader.tasks.email_notice')
 def email_notice(mtgox_price, coinbase_price, bitstamp_price):
+    print 'mtgox_price=%s' % mtgox_price
+    print 'coinbase_price=%s' % coinbase_price
+    print 'bitstamp_price=%s' % bitstamp_price
+    
     mtgox_price = Decimal(mtgox_price)
     coinbase_price = Decimal(coinbase_price)
     bitstamp_price = Decimal(bitstamp_price)

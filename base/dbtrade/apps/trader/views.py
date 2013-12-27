@@ -13,7 +13,7 @@ from django.contrib.auth.views import login as auth_login, logout as auth_logout
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 
-from dbtrade.apps.trader.models import TickerHistory
+from dbtrade.apps.trader.models import TickerHistory, EmailNotice
 
 
 def logout(request):
@@ -250,3 +250,18 @@ def historical(request):
     env['form'] = form
     env['profit_name'] = 'Potential Profit'
     return render_to_response('historical.html', RequestContext(request, env))
+
+
+def notification(request, uuid=None):
+    if uuid:
+        try:
+            email = EmailNotice.objects.get(uuid=uuid)
+        except EmailNotice.DoesNotExist:
+            raise Http404
+    else:
+        email = EmailNotice()
+        
+    #: TODO: stuff
+    
+    if request.method == 'POST':
+        pass
