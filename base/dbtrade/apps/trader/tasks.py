@@ -85,9 +85,13 @@ def email_notice(mtgox_price, coinbase_price, bitstamp_price):
         for point in ['high', 'low']:
             now = datetime.now()
             price = locals()['%s_price' % market]
+            if point == 'high':
+                point_extra = 'gte'
+            else:
+                point_extra = 'lte'
             kwargs = {
                       'market': market.upper(),
-                      '%s_price_point' % point: price,
+                      '%s_price_point__%s' % (point, point_extra): price,
                       'active': True
                       }
             print 'Querying for %s' % str(kwargs)
