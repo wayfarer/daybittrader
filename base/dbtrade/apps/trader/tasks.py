@@ -81,6 +81,7 @@ def email_notice(mtgox_price, coinbase_price, bitstamp_price):
                   'WEEKLY': timedelta(days=7)
                   }
     for market in ['mtgox', 'coinbase', 'bitstamp']:
+        print 'Market %s' % market
         for point in ['high', 'low']:
             now = datetime.now()
             price = locals()['%s_price' % market]
@@ -89,17 +90,24 @@ def email_notice(mtgox_price, coinbase_price, bitstamp_price):
                       '%s_price_point' % point: price,
                       'active': True
                       }
+            print 'Querying for %s' % str(kwargs)
             universal_time_exclusion = now - timedeltas['HOURLY']
             emails = EmailNotice.objects.filter(**kwargs).exclude(last_sent__gte=universal_time_exclusion)
+            print 'Found %d matching notices...' % emails.count()
             for email in emails:
-                max_date = now - timedeltas[email]
+                max_date = now - timedeltas[email.frequency]
                 recent_logs = EmailNoticeLog.objects.filter(email_notice=email,date_added__gte=max_date)
                 recent_log = recent_logs.order_by('id').reverse()[:1]
                 try:
                     recent_log[0]
                 except IndexError:
-                    #: We have sent another email within the window, we exclude DAILY and WEEKLY folks here
+                    print 'No outgoing emails logged for %s range for %s' % (email.frequency, email.email)
+                else:
+                    #: We have sent another email within the window, for DAILY and WEEKLY folks.
+                    print 'Previous outgoing email was sent at %s for %s. Skipping...' % (str(recent_log[0].date_added),
+                                                                                          email.email)
                     continue
+                
                 if email.max_send != None and recent_logs.count() + 1 >= email.max_send:
                     email.active = False
                     
@@ -109,6 +117,7 @@ def email_notice(mtgox_price, coinbase_price, bitstamp_price):
                 message += 'See latest charts at https://daybittrader.com/\n'
                 message += 'Edit or cancel this notification: https://daybittrader.com/notification/%s' % email.uuid
                 
+                print 'Sending...'
                 send_mail(subject='Bitcoin price notification for %s ($%s)' % (str(now), str(price)),
                           message=message, from_email='Bitcoin Notifications <%s>' % settings.EMAIL_HOST_USER,
                           recipient_list=[email.email])
