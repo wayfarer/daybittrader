@@ -91,22 +91,27 @@ class EmailNotice(TimeStampModel):
     uuid = models.CharField(max_length=36, db_index=True, null=True)
     
     #: Email address to send notifications to
-    email = models.EmailField(max_length=254)
+    email = models.EmailField(max_length=254, help_text='Your email address')
     
     #: If price rises above this point, send notification
-    high_price_point = models.DecimalField(max_digits=12, decimal_places=5, db_index=True)
+    high_price_point = models.DecimalField(max_digits=12, decimal_places=5, db_index=True,
+                                           help_text='If price rises above this point, send notification ($USD)')
     
     #: If price falls below this point, send notification
-    low_price_point = models.DecimalField(max_digits=12, decimal_places=5, db_index=True)
+    low_price_point = models.DecimalField(max_digits=12, decimal_places=5, db_index=True,
+                                          help_text='If price falls below this point, send notification ($USD)')
     
     #: Market to use as price indicator. COINBASE, MTGOX, or BITSTAMP
-    market = models.CharField(max_length=32, db_index=True, choices=MARKET_CHOICES)
+    market = models.CharField(max_length=32, db_index=True, choices=MARKET_CHOICES,
+                              help_text='Which market should be the key to notifications')
     
     #: How often to send notification: HOURLY, DAILY or WEEKLY
-    frequency = models.CharField(max_length=32, choices=FREQUENCY_CHOICES)
+    frequency = models.CharField(max_length=32, choices=FREQUENCY_CHOICES,
+                                 help_text='Maximum frequency to send notifications')
     
     #: Maximum amount of times to send notifications
-    max_send = models.IntegerField(null=True)
+    max_send = models.IntegerField(null=True, blank=True,
+                                   help_text='Maximum number of notifications to send (leave blank for unlimited)')
     
     #: Whether to send notifications at all
     active = models.BooleanField(default=True)
