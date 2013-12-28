@@ -7,11 +7,17 @@
 {% endblock head %}
 
 {% block body %}
-<form action="" method="post">
-	{% csrf_token %}
-	{{ form|bootstrap }}
-	<p><input type="submit" value="Update" class="btn btn-large btn-primary"></p>
-</form>
+<div class="row">
+	<div class="col-md-3"></div>
+	<div class="col-md-6">
+		<form action="" method="post">
+			{% csrf_token %}
+			{{ form|bootstrap }}
+			<p><input type="submit" value="Update" class="btn btn-large btn-primary"></p>
+		</form>
+	</div>
+	<div class="col-md-3"></div>
+</div>
 {% endblock body %}
 
 {% block bottom %}

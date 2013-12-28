@@ -269,14 +269,21 @@ def notification(request, uuid=None):
         except EmailNotice.DoesNotExist:
             raise Http404
         else:
-            form = EmailNoticeForm(instance=email)
+            if request.method == 'POST':
+                form = EmailNoticeForm(request.POST, instance=email)
+            else:
+                form = EmailNoticeForm(instance=email)
     else:
-        form = EmailNoticeForm()
+        if request.method == 'POST':
+            form = EmailNoticeForm(request.POST)
+        else:
+            form = EmailNoticeForm()
         
     #: TODO: stuff
     
     if request.method == 'POST':
-        pass
+        notification = form.save()
+        return HttpResponseRedirect('/notification/%s/?saved' % notification.uuid)
     
     env = {
            'form': form
