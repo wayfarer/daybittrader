@@ -282,8 +282,9 @@ def notification(request, uuid=None):
     #: TODO: stuff
     
     if request.method == 'POST':
-        notification = form.save()
-        return HttpResponseRedirect('/notification/%s/?saved' % notification.uuid)
+        if form.is_valid():
+            notification = form.save()
+            return HttpResponseRedirect('/notification/%s/?saved' % notification.uuid)
     
     env = {
            'form': form
