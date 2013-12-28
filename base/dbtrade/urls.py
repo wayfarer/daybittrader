@@ -10,12 +10,10 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'dbtrade.apps.trader.views.logout', name='logout'),
     url(r'^historical/$', 'dbtrade.apps.trader.views.historical', name='historical'),
     url(r'^about/$', 'dbtrade.apps.trader.views.about', name='about'),
+    url(r'^notification/$', 'dbtrade.apps.trader.views.notification'),
+    url(r'^notification/(?P<uuid>[-\w]+)/$', 'dbtrade.apps.trader.views.notification'),
+    
     url(r'^_callback/_access/_$', 'dbtrade.apps.trader.callback.access_fee'),
-    # url(r'^dbtrade/', include('dbtrade.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
+    
     url(r'^admin/', include(admin.site.urls)),
 )

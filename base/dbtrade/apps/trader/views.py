@@ -252,16 +252,33 @@ def historical(request):
     return render_to_response('historical.html', RequestContext(request, env))
 
 
+class EmailNoticeForm(forms.ModelForm):
+    class Meta:
+        model = EmailNotice
+        fields = ['email', 'high_price_point', 'low_price_point', 'market', 'frequency', 'max_send']
+
+
 def notification(request, uuid=None):
+    if request.GET.get('email', None) != None and uuid == None:
+        request.session['email'] = request.GET['email']
+        return HttpResponseRedirect('/notification/')
+    
     if uuid:
         try:
             email = EmailNotice.objects.get(uuid=uuid)
         except EmailNotice.DoesNotExist:
             raise Http404
+        else:
+            form = EmailNoticeForm(instance=email)
     else:
-        email = EmailNotice()
+        form = EmailNoticeForm()
         
     #: TODO: stuff
     
     if request.method == 'POST':
         pass
+    
+    env = {
+           'form': form
+           }
+    return render_to_response('notification.html', RequestContext(request, env))

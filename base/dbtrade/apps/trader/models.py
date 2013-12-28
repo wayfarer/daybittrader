@@ -79,6 +79,10 @@ class OrderRecord(TimeStampModel):
     
     #: If True, when this bid is made, it does not get replaced every 5 minutes.
     hold = models.BooleanField(default=False)
+    
+    
+MARKET_CHOICES = (('COINBASE', 'Coinbase'), ('MTGOX', 'MtGox'), ('BITSTAMP', 'Bitstamp'))
+FREQUENCY_CHOICES = (('HOURLY', 'Hourly'), ('DAILY', 'Daily'), ('WEEKLY', 'Weekly'))
 
 
 class EmailNotice(TimeStampModel):
@@ -96,10 +100,10 @@ class EmailNotice(TimeStampModel):
     low_price_point = models.DecimalField(max_digits=12, decimal_places=5, db_index=True)
     
     #: Market to use as price indicator. COINBASE, MTGOX, or BITSTAMP
-    market = models.CharField(max_length=32, db_index=True)
+    market = models.CharField(max_length=32, db_index=True, choices=MARKET_CHOICES)
     
     #: How often to send notification: HOURLY, DAILY or WEEKLY
-    frequency = models.CharField(max_length=32)
+    frequency = models.CharField(max_length=32, choices=FREQUENCY_CHOICES)
     
     #: Maximum amount of times to send notifications
     max_send = models.IntegerField(null=True)
