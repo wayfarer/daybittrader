@@ -107,7 +107,7 @@ class EmailNotice(TimeStampModel):
     
     #: How often to send notification: HOURLY, DAILY or WEEKLY
     frequency = models.CharField(max_length=32, choices=FREQUENCY_CHOICES,
-                                 help_text='Maximum frequency to send notifications')
+                                 help_text='Maximum frequency to send notifications if price is in high or low range')
     
     #: Maximum amount of times to send notifications
     max_send = models.IntegerField(null=True, blank=True,

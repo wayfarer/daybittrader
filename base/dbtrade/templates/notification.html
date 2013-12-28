@@ -8,17 +8,44 @@
 
 {% block body %}
 <div class="row">
-	<div class="col-md-3"></div>
+	<div class="col-md-3">
+		{% if edit %}
+		<p>&nbsp;</p>
+		<p>Notification is currently <strong>{% if notification.active %}<span style="color:green;">ACTIVE</span>
+			{% else %}<span style="color:red;">INACTIVE</span>{% endif %}</strong><br>
+			<a href=".?{% if notification.active %}cancel{% else %}activate{% endif %}">
+				{% if notification.active %}Cancel{% else %}Activate{% endif %} this notification
+			</a>.</p>
+		{% endif %}
+	</div>
 	<div class="col-md-6">
-		<form action="" method="post">
+		<h2>Free Email Notifications *</h2>
+		{% if saved %}
+		<p>This notification has been saved.  <a href="/notification/{{ uuid }}">Update notification</a>.</p>
+		{% else %}
+		<form action="" method="post" class="condensed">
 			{% csrf_token %}
 			{{ form|bootstrap }}
-			<p><input type="submit" value="Update" class="btn btn-large btn-primary"></p>
+			<p><input type="submit" value="{% if edit %}Update{% else %}Create{% endif %} Notification"
+				class="btn btn-large btn-primary"></p>
 		</form>
+		{% endif %}
+		<p><small>* Email will not be sent to you for any purpose other than price notifications.  All emails are kept private.</small></p>
 	</div>
 	<div class="col-md-3"></div>
 </div>
 {% endblock body %}
 
 {% block bottom %}
+<script>
+$(document).ready(function() {
+	var inputs = $('form input');
+	for(var i=0; i<inputs.length; i++) {
+		if(!inputs[i].value) {
+			$(inputs[i]).focus();
+			break;
+		}
+	}
+});
+</script>
 {% endblock bottom %}

@@ -48,3 +48,7 @@
 }
 
 #history-chart {}
+
+.condensed {
+	line-height: 75%;
+}

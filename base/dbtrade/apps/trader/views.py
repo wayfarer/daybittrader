@@ -263,23 +263,34 @@ def notification(request, uuid=None):
         request.session['email'] = request.GET['email']
         return HttpResponseRedirect('/notification/')
     
+    saved = 'saved' in request.GET and uuid != None
+    
     if uuid:
         try:
-            email = EmailNotice.objects.get(uuid=uuid)
+            notification = EmailNotice.objects.get(uuid=uuid)
         except EmailNotice.DoesNotExist:
             raise Http404
         else:
+            edit = True
             if request.method == 'POST':
-                form = EmailNoticeForm(request.POST, instance=email)
+                form = EmailNoticeForm(request.POST, instance=notification)
             else:
-                form = EmailNoticeForm(instance=email)
+                form = EmailNoticeForm(instance=notification)
     else:
+        notification = None
+        edit = False
         if request.method == 'POST':
             form = EmailNoticeForm(request.POST)
+        elif 'email' in request.session:
+            form = EmailNoticeForm(initial={'email': request.session['email']})
         else:
             form = EmailNoticeForm()
-        
-    #: TODO: stuff
+    
+    if edit:
+        if 'cancel' in request.GET or 'activate' in request.GET:
+            notification.active = 'activate' in request.GET
+            notification.save()
+            return HttpResponseRedirect('/notification/%s/?saved' % notification.uuid)
     
     if request.method == 'POST':
         if form.is_valid():
@@ -287,6 +298,10 @@ def notification(request, uuid=None):
             return HttpResponseRedirect('/notification/%s/?saved' % notification.uuid)
     
     env = {
-           'form': form
+           'form': form,
+           'edit': edit,
+           'saved': saved,
+           'notification': notification,
+           'uuid': uuid
            }
     return render_to_response('notification.html', RequestContext(request, env))
