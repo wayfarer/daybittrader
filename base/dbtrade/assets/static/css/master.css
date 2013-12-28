@@ -52,3 +52,19 @@
 .condensed {
 	line-height: 75%;
 }
+
+#notifications-signup-step1 {
+	color: #666;
+	text-align: center;
+	font-size: 18px;
+	border-bottom: 3px solid #666;
+	padding-bottom: 4px;
+}
+
+#notifications-signup-step1 a {
+	color: blue;
+}
+
+#notifications-signup-step1 strong {
+	color: #000;
+}
