@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import login as auth_login, logout as auth_logout
 
 from dbtrade.apps.trader.models import TickerHistory
+from dbtrade.utils.apiclient import CoinBaseAPI
 
 
 @csrf_exempt
@@ -25,3 +26,14 @@ def access_fee(request):
     return HttpResponse('{"status": "ok"}', mimetype='application/json')
     #env = {}
     #return render_to_response('about.html', RequestContext(request, env))
+
+
+@login_required
+def connect_coinbase(request):
+    pass
+
+
+@login_required
+def connect_coinbase_callback(request):
+    pass
+

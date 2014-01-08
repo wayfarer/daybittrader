@@ -13,6 +13,9 @@ urlpatterns = patterns('',
     url(r'^notification/$', 'dbtrade.apps.trader.views.notification'),
     url(r'^notification/(?P<uuid>[-\w]+)/$', 'dbtrade.apps.trader.views.notification'),
     
+    url(r'^connect/coinbase/$', 'dbtrade.apps.trader.callback.connect_coinbase'),
+    url(r'^connect/coinbase/callback/$', 'dbtrade.apps.trader.callback.connect_coinbase_callback'),
+    
     url(r'^_callback/_access/_$', 'dbtrade.apps.trader.callback.access_fee'),
     
     url(r'^admin/', include(admin.site.urls)),
