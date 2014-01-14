@@ -1,4 +1,5 @@
 import sys, os
+import json
 
 MANAGE_ROOT = os.path.dirname(os.path.realpath(os.path.dirname(__file__)))
 ROOT = os.path.dirname(MANAGE_ROOT)
@@ -22,26 +23,35 @@ sys.path.append(MANAGE_ROOT)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dbtrade.settings")
 
+with open(os.path.join(SUB_ROOT, 'config.json')) as f:
+    config = json.loads(f.read())
+    os.environ['DBT_SETTINGS_CONFIG'] = config['DBT_SETTINGS_CONFIG']
+    os.environ['DBT_CB_ID'] = config['DBT_CB_ID']
+    os.environ['DBT_CB_SECRET'] = config['DBT_CB_SECRET']
+
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.
-#from django.core.wsgi import get_wsgi_application
+from django.core.wsgi import get_wsgi_application
 #application = get_wsgi_application()
 
-from django.core.handlers.wsgi import WSGIHandler, WSGIRequest
+#from django.core.handlers.wsgi import WSGIHandler
 
-class WSGIEnvironmentRequest(WSGIRequest):
-    def __init__(self, environ):
-        os.environ['DBT_SETTINGS_CONFIG'] = environ['DBT_SETTINGS_CONFIG']
-        os.environ['DBT_CB_ID'] = environ['DBT_CB_ID']
-        os.environ['DBT_CB_SECRET'] = environ['DBT_CB_SECRET']
-        super(WSGIEnvironmentRequest, self).__init__(environ)
-
-class WSGIEnvironment(WSGIHandler):
-    request_class = WSGIEnvironmentRequest
-
-def get_wsgi_application():
-    return WSGIEnvironment()
+#: The following doesn't work when settings.debug=False for some reason
+#===============================================================================
+# class WSGIEnvironment(WSGIHandler):
+#         
+#     def __call__(self, environ, start_response):
+#         
+#         os.environ['DBT_SETTINGS_CONFIG'] = environ['DBT_SETTINGS_CONFIG']
+#         os.environ['DBT_CB_ID'] = environ['DBT_CB_ID']
+#         os.environ['DBT_CB_SECRET'] = environ['DBT_CB_SECRET']
+#         
+#         return super(WSGIEnvironment, self).__call__(environ, start_response)
+# 
+# def get_wsgi_application():
+#     return WSGIEnvironment()
+#===============================================================================
 
 application = get_wsgi_application()
 
