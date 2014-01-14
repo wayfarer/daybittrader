@@ -28,6 +28,19 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dbtrade.settings")
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 
+
+class WsgiEnvironment(object):
+    def __init__(self, application):
+        self.application = application
+        
+    def __call__(self, environ, start_response):
+        os.environ['DBT_SETTINGS_CONFIG'] = environ['DBT_SETTINGS_CONFIG']
+        os.environ['DBT_CB_ID'] = environ['DBT_CB_ID']
+        os.environ['DBT_CB_SECRET'] = environ['DBT_CB_SECRET']
+        return start_response
+    
+application = WsgiEnvironment(application)
+
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application)
