@@ -1,6 +1,8 @@
 import hmac, base64, hashlib, urllib, urllib2, time, json, time
 
 from coinbase import CoinbaseAccount
+from django.conf import settings
+from oauth2client.client import OAuth2WebServerFlow
 
 class MtGoxAPI(object):
     
@@ -142,6 +144,12 @@ class MtGoxAPI(object):
     
 class CoinBaseAPI(CoinbaseAccount):
     pass
+
+
+coinbase_client = OAuth2WebServerFlow(settings.COINBASE_ID, settings.COINBASE_SECRET, 'all',
+                                      redirect_uri=settings.COINBASE_CALLBACK_URL,
+                                      auth_uri='https://www.coinbase.com/oauth/authorize',
+                                      token_uri='https://www.coinbase.com/oauth/token')
 
 
 def get_bitstamp_ticker():

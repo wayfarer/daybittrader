@@ -1,7 +1,9 @@
 import uuid
+from datetime import datetime
 
 from django.db import models
-from datetime import datetime
+from django.contrib.auth.models import User
+
 
 class TimeStampModel(models.Model):
     #: Date added
@@ -142,3 +144,8 @@ class EmailNoticeLog(models.Model):
     
     #: We don't use LogModel, because we need to index this field for timedelta searches for frequency calculation
     date_added = models.DateTimeField(auto_now_add=True, db_index=True)
+
+
+class UserSettings(models.Model):
+    user = models.OneToOneField(User)
+    coinbase_oauth_token = models.TextField(null=True)

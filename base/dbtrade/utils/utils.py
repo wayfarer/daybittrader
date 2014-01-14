@@ -2,11 +2,32 @@ import os, sys
 import time
 import random
 
+from django.utils.thread_support import currentThread
+
 from dbtrade.apps.trader.utils.my_api_client import API
+from dbtrade.apps.trader.models import UserSettings
 
 
 BTC_INT_FACTOR = 100000000
 USD_INT_FACTOR = 100000
+
+
+_requests = {}
+
+def get_request():
+    return _requests[currentThread()]
+
+
+class GlobalRequestMiddleware(object):
+    def process_request(self, request):
+        _requests[currentThread()] = request
+        if request.user.is_authenticated():
+            try:
+                user_settings = UserSettings.objects.get(user=request.user)
+            except UserSettings.DoesNotExist:
+                user_settings = UserSettings(user=request.user)
+                user_settings.save()
+
 
 def clear_all_bids():
     orders = API.get_orders()
@@ -15,6 +36,7 @@ def clear_all_bids():
         if order['type'] == 'bid':
             print 'Canceling %s' % order['oid']
             API.cancel_order(order['oid'])
+
 
 def tickle_bids(low, high, amountlow=.02, amounthigh=.09, concurrent=4, pause=33.5):
     try:

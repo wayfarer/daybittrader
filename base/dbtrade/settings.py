@@ -115,6 +115,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'dbtrade.utils.utils.GlobalRequestMiddleware',
 )
 
 ROOT_URLCONF = 'dbtrade.urls'
@@ -212,6 +213,7 @@ EMAIL_USE_TLS = True
 
 COINBASE_ID = os.environ['DBT_CB_ID']
 COINBASE_SECRET = os.environ['DBT_CB_SECRET']
+COINBASE_CALLBACK_URL = 'https://daybittrader.com/connect/coinbase/callback/'
 
 
 #: DO NOT EDIT BELOW THIS LINE!!
