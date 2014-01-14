@@ -25,21 +25,21 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dbtrade.settings")
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.
-from django.core.wsgi import get_wsgi_application
-application = get_wsgi_application()
+#from django.core.wsgi import get_wsgi_application
+#application = get_wsgi_application()
+
+from django.core.handlers.wsgi import WSGIHandler
 
 
-class WsgiEnvironment(object):
-    def __init__(self, application):
-        self.application = application
+class WSGIEnvironment(WSGIHandler):
         
     def __call__(self, environ, start_response):
         os.environ['DBT_SETTINGS_CONFIG'] = environ['DBT_SETTINGS_CONFIG']
         os.environ['DBT_CB_ID'] = environ['DBT_CB_ID']
         os.environ['DBT_CB_SECRET'] = environ['DBT_CB_SECRET']
-        return start_response
+        return super(WSGIEnvironment, self).__call__(environ, start_response)
     
-application = WsgiEnvironment(application)
+application = WSGIEnvironment()
 
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication
