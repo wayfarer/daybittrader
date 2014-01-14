@@ -33,7 +33,6 @@ def access_fee(request):
 def connect_coinbase(request):
     coinbase_callback_redirect_to = request.GET.get('redirect_to', None)
     request.session['coinbase_callback_redirect_to'] = coinbase_callback_redirect_to
-    return HttpResponse(coinbase_client.step1_get_authorize_url())
     return HttpResponseRedirect(coinbase_client.step1_get_authorize_url())
 
 

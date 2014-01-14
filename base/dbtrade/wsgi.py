@@ -1,5 +1,4 @@
 import sys, os
-import json
 
 MANAGE_ROOT = os.path.dirname(os.path.realpath(os.path.dirname(__file__)))
 ROOT = os.path.dirname(MANAGE_ROOT)
@@ -22,14 +21,6 @@ sys.path.append(ROOT)
 sys.path.append(MANAGE_ROOT)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dbtrade.settings")
-
-#===============================================================================
-# with open(os.path.join(SUB_ROOT, 'config.json')) as f:
-#     config = json.loads(f.read())
-#     os.environ['DBT_SETTINGS_CONFIG'] = config['DBT_SETTINGS_CONFIG']
-#     os.environ['DBT_CB_ID'] = config['DBT_CB_ID']
-#     os.environ['DBT_CB_SECRET'] = config['DBT_CB_SECRET']
-#===============================================================================
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
