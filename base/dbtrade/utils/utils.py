@@ -2,7 +2,7 @@ import os, sys
 import time
 import random
 
-from django.utils.thread_support import currentThread
+#from django.utils.thread_support import currentThread
 
 from dbtrade.apps.trader.utils.my_api_client import API
 from dbtrade.apps.trader.models import UserSettings
@@ -12,15 +12,18 @@ BTC_INT_FACTOR = 100000000
 USD_INT_FACTOR = 100000
 
 
-_requests = {}
-
-def get_request():
-    return _requests[currentThread()]
+#: The following causes and error in this version of Django because django.utils.thread_support is gone:
+#===============================================================================
+# _requests = {}
+# 
+# def get_request():
+#     return _requests[currentThread()]
+#===============================================================================
 
 
 class GlobalRequestMiddleware(object):
     def process_request(self, request):
-        _requests[currentThread()] = request
+        #_requests[currentThread()] = request
         if request.user.is_authenticated():
             try:
                 user_settings = UserSettings.objects.get(user=request.user)
