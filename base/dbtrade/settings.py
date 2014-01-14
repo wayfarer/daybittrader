@@ -211,8 +211,8 @@ EMAIL_HOST_USER = 'notifications@daybittrader.com'
 EMAIL_HOST_PASSWORD = 'kzQbED8HV6SC6wEHFK8R'
 EMAIL_USE_TLS = True
 
-COINBASE_ID = os.environ['DBT_CB_ID']
-COINBASE_SECRET = os.environ['DBT_CB_SECRET']
+COINBASE_ID = os.environ.get('DBT_CB_ID', None)
+COINBASE_SECRET = os.environ.get('DBT_CB_SECRET', None)
 COINBASE_CALLBACK_URL = 'https://daybittrader.com/connect/coinbase/callback/'
 
 
