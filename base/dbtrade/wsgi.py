@@ -28,19 +28,17 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dbtrade.settings")
 #from django.core.wsgi import get_wsgi_application
 #application = get_wsgi_application()
 
-from django.core.handlers.wsgi import WSGIHandler
+from django.core.handlers.wsgi import WSGIHandler, WSGIRequest
 
-class WSGIEnvironment(WSGIHandler):
-        
-    def __call__(self, environ, start_response):
-        
-        response = super(WSGIEnvironment, self).__call__(environ, start_response)
-        #: Important, set os.environ after creating response, otherwise incompatible with settings.debug=False
+class WSGIEnvironmentRequest(WSGIRequest):
+    def __init__(self, environ):
         os.environ['DBT_SETTINGS_CONFIG'] = environ['DBT_SETTINGS_CONFIG']
         os.environ['DBT_CB_ID'] = environ['DBT_CB_ID']
         os.environ['DBT_CB_SECRET'] = environ['DBT_CB_SECRET']
-        
-        return response
+        super(WSGIEnvironmentRequest, self).__init__(environ)
+
+class WSGIEnvironment(WSGIHandler):
+    request_class = WSGIEnvironmentRequest
 
 def get_wsgi_application():
     return WSGIEnvironment()
