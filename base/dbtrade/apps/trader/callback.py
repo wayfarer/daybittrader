@@ -49,4 +49,6 @@ def connect_coinbase_callback(request):
     request.user.usersettings.save()
     
     coinbase_callback_redirect_to = request.session.get('coinbase_callback_redirect_to', '/')
+    if coinbase_callback_redirect_to == None:
+        coinbase_callback_redirect_to = '/'
     return HttpResponseRedirect(coinbase_callback_redirect_to)
