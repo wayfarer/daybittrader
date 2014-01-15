@@ -45,7 +45,7 @@ def connect_coinbase_callback(request):
     http = httplib2.Http(ca_certs='/etc/ssl/certs/ca-certificates.crt')
     token = coinbase_client.step2_exchange(oauth_code, http=http)
     
-    request.user.usersettings.coinbase_oauth_token = token
+    request.user.usersettings.coinbase_oauth_token = token.to_json()
     request.user.usersettings.save()
     
     coinbase_callback_redirect_to = request.session.get('coinbase_callback_redirect_to', '/')

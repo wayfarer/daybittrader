@@ -148,6 +148,7 @@ class CoinBaseAPI(CoinbaseAccount):
 
 coinbase_client = OAuth2WebServerFlow(settings.COINBASE_ID, settings.COINBASE_SECRET, 'buy sell balance',
                                       redirect_uri=settings.COINBASE_CALLBACK_URL,
+                                      user_agent='Day-BitTrader',
                                       auth_uri='https://coinbase.com/oauth/authorize',
                                       token_uri='https://coinbase.com/oauth/token')
 
