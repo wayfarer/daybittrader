@@ -42,8 +42,9 @@ def connect_coinbase_callback(request):
     if oauth_code == None:
         raise Http404
     
-    http = httplib2.Http(ca_certs='/etc/ssl/certs/ca-certificates.crt')
-    token = coinbase_client.step2_exchange(oauth_code, http=http)
+    #http = httplib2.Http(ca_certs='/etc/ssl/certs/ca-certificates.crt')
+    #token = coinbase_client.step2_exchange(oauth_code, http=http)
+    token = coinbase_client.step2_exchange(oauth_code)
     
     request.user.usersettings.coinbase_oauth_token = token
     request.user.usersettings.save()
