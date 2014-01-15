@@ -4,7 +4,7 @@ import random
 
 #from django.utils.thread_support import currentThread
 
-from dbtrade.apps.trader.utils.my_api_client import API
+from dbtrade.apps.trader.utils.my_api_client import API, CoinBaseAPI
 from dbtrade.apps.trader.models import UserSettings
 
 
@@ -67,3 +67,13 @@ def tickle_bids(low, high, amountlow=.02, amounthigh=.09, concurrent=4, pause=33
     except KeyboardInterrupt:
         print '\nStopping...'
         clear_all_bids()
+        
+        
+def get_user_cb_api(user):
+    token_json = user.usersettings.coinbase_oauth_token
+    if not token_json:
+        return None
+    CB_API = CoinBaseAPI(oauth2_credentials=token_json)
+    if CB_API.token_expired:
+        pass
+    return CB_API

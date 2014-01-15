@@ -1,5 +1,6 @@
 import hmac, base64, hashlib, urllib, urllib2, time, json, time
 
+import httplib2
 from coinbase import CoinbaseAccount
 from django.conf import settings
 from oauth2client.client import OAuth2WebServerFlow
@@ -143,10 +144,13 @@ class MtGoxAPI(object):
     #: https://bitbucket.org/nitrous/mtgox-api/overview#markdown-header-other-methods
     
 class CoinBaseAPI(CoinbaseAccount):
-    pass
+    def __init__(self, oauth2_credentials=None, api_key=None):
+        super(CoinBaseAPI, self).__init__(oauth2_credentials, api_key)
+        if oauth2_credentials:
+            self.http = httplib2.Http(ca_certs='/etc/ssl/certs/ca-certificates.crt')
 
 
-coinbase_client = OAuth2WebServerFlow(settings.COINBASE_ID, settings.COINBASE_SECRET, 'buy sell balance',
+coinbase_oauth_client = OAuth2WebServerFlow(settings.COINBASE_ID, settings.COINBASE_SECRET, 'buy sell balance',
                                       redirect_uri=settings.COINBASE_CALLBACK_URL,
                                       user_agent='Day-BitTrader',
                                       auth_uri='https://coinbase.com/oauth/authorize',

@@ -14,7 +14,7 @@ from django.contrib.auth.views import login as auth_login, logout as auth_logout
 import httplib2
 
 from dbtrade.apps.trader.models import TickerHistory
-from dbtrade.utils.apiclient import CoinBaseAPI, coinbase_client
+from dbtrade.utils.apiclient import CoinBaseAPI, coinbase_oauth_client
 
 
 @csrf_exempt
@@ -33,7 +33,7 @@ def access_fee(request):
 def connect_coinbase(request):
     coinbase_callback_redirect_to = request.GET.get('redirect_to', None)
     request.session['coinbase_callback_redirect_to'] = coinbase_callback_redirect_to
-    return HttpResponseRedirect(coinbase_client.step1_get_authorize_url())
+    return HttpResponseRedirect(coinbase_oauth_client.step1_get_authorize_url())
 
 
 @login_required
@@ -43,7 +43,7 @@ def connect_coinbase_callback(request):
         raise Http404
     
     http = httplib2.Http(ca_certs='/etc/ssl/certs/ca-certificates.crt')
-    token = coinbase_client.step2_exchange(oauth_code, http=http)
+    token = coinbase_oauth_client.step2_exchange(oauth_code, http=http)
     
     request.user.usersettings.coinbase_oauth_token = token.to_json()
     request.user.usersettings.save()
