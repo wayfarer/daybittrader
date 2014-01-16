@@ -18,5 +18,6 @@ urlpatterns = patterns('',
     
     url(r'^_callback/_access/_$', 'dbtrade.apps.trader.callback.access_fee'),
     
+    url(r'^trade/', include('dbtrade.apps.trader.trade.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )
