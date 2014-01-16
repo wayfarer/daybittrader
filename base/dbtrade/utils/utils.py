@@ -81,7 +81,7 @@ def get_user_cb_api(user):
         try:
             token = CB_API.refresh_oauth()
             user.usersettings.coinbase_oauth_token = token.to_json()
-            user.usersettings.coinbase_oauth_token.save()
+            user.usersettings.save()
         except AccessTokenRefreshError:
             print 'AccessTokenRefreshError'
             return None
