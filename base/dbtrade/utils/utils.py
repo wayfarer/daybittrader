@@ -3,6 +3,7 @@ import time
 import random
 
 #from django.utils.thread_support import currentThread
+from oauth2client.client import AccessTokenRefreshError
 
 from dbtrade.apps.trader.utils.my_api_client import API, CoinBaseAPI
 from dbtrade.apps.trader.models import UserSettings
@@ -73,7 +74,15 @@ def get_user_cb_api(user):
     token_json = user.usersettings.coinbase_oauth_token
     if not token_json:
         return None
+    #: TODO, check if result is JSON serializable, then migrate to encrypted form for future security
     CB_API = CoinBaseAPI(oauth2_credentials=token_json)
     if CB_API.token_expired:
-        pass
+        print 'Token expired, attempting refresh...'
+        try:
+            token = CB_API.refresh_oauth()
+            user.usersettings.coinbase_oauth_token = token.to_json()
+            user.usersettings.coinbase_oauth_token.save()
+        except AccessTokenRefreshError:
+            print 'AccessTokenRefreshError'
+            return None
     return CB_API
