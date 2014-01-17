@@ -219,7 +219,7 @@ def bus_days_ago(from_date, days_ago):
     return from_date - timedelta(days=true_business_days_delay)
 
 
-@login_required
+@login_required(login_url='/#login-form')
 def historical(request):
     
     fields_set = False

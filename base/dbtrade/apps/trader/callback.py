@@ -29,14 +29,14 @@ def access_fee(request):
     #return render_to_response('about.html', RequestContext(request, env))
 
 
-@login_required
+@login_required(login_url='/#login-form')
 def connect_coinbase(request):
     coinbase_callback_redirect_to = request.GET.get('redirect_to', None)
     request.session['coinbase_callback_redirect_to'] = coinbase_callback_redirect_to
     return HttpResponseRedirect(coinbase_oauth_client.step1_get_authorize_url())
 
 
-@login_required
+@login_required(login_url='/#login-form')
 def connect_coinbase_callback(request):
     oauth_code = request.GET.get('code', None)
     if oauth_code == None:
