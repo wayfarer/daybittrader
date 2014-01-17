@@ -144,6 +144,54 @@ class EmailNoticeLog(models.Model):
     
     #: We don't use LogModel, because we need to index this field for timedelta searches for frequency calculation
     date_added = models.DateTimeField(auto_now_add=True, db_index=True)
+    
+
+TRADE_TYPE_CHOICES = (('BUY', 'Buy'), ('SELL', 'Sell'))
+
+
+class TradeOrder(TimeStampModel):
+    
+    #: Don't execute trade until the parent trade has first been executed.  Can be used for buy/sell plans, etc
+    parent_trade = models.ForeignKey('TradeOrder', null=True)
+    
+    #: Unique identifier for convenience of user
+    uuid = models.CharField(max_length=36, db_index=True, null=True)
+    
+    #: Type of trade, BUY or SELL
+    type = models.CharField(max_length=32, choices=TRADE_TYPE_CHOICES, db_index=True)
+    
+    #: When to trade.  Low for BUY, high for SELL
+    price_point = models.DecimalField(max_digits=12, decimal_places=5, db_index=True)
+    
+    #: Amount to trade, in BTC.  In the future, we may allow purchasing in fiat amounts.
+    btc_amount = models.DecimalField(max_digits=18, decimal_places=8)
+    
+    #: Whether order is still active, or has been canceled.
+    active = models.BooleanField(default=True, db_index=True)
+    
+    #: When trade order expires.  We require this to be set, for now.
+    date_expire = models.DateTimeField(db_index=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.uuid:
+            self.uuid = uuid.uuid4()
+        
+        super(TradeOrder, self).save(*args, **kwargs)
+
+
+class TradeOrderLog(LogModel):
+    
+    #: Which trade order
+    trade_order = models.ForeignKey(TradeOrder)
+    
+    #: Type of trade, BUY or SELL.  Redundant
+    type = models.CharField(max_length=32)
+    
+    #: Amount of BTC purchased.  Redundant.
+    btc_amount = models.DecimalField(max_digits=18, decimal_places=8)
+    
+    #: The actual price traded at.  Could be lower or higher than original price point
+    price_point = models.DecimalField(max_digits=12, decimal_places=5)
 
 
 class UserSettings(models.Model):
