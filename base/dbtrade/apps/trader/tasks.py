@@ -16,13 +16,14 @@ from dbtrade.apps.trader.utils.utils import auto_trade
 from dbtrade.utils.apiclient import get_bitstamp_ticker
 
 
-@task(ignore_results=True, name='dbtrade.apps.trader.tasks.trader')
+@task(queue='ticker', ignore_results=True, name='dbtrade.apps.trader.tasks.trader')
 def trader(ticker_id):
+    #: Deprecated
     current_ticker = TickerHistory.objects.get(id=ticker_id)
     auto_trade(current_ticker, buy_mode='hold', sell_mode='hold')
 
 
-@periodic_task(run_every=timedelta(seconds=600), ignore_result=True)
+@periodic_task(queue='ticker', run_every=timedelta(seconds=600), ignore_result=True, name='dbtrade.apps.trader.tasks.ticker_save')
 def ticker_save(*args, **kwargs):
     res = API.get_ticker()
     if res['result'] == 'success':
@@ -65,7 +66,7 @@ def ticker_save(*args, **kwargs):
         print 'Ticker data result other than success: "%s"' % res['result']
         
         
-@task(ignore_results=True, name='dbtrade.apps.trader.tasks.email_notice')
+@task(queue='notices', ignore_results=True, name='dbtrade.apps.trader.tasks.email_notice')
 def email_notice(mtgox_price, coinbase_price, bitstamp_price):
     print 'mtgox_price=%s' % mtgox_price
     print 'coinbase_price=%s' % coinbase_price
