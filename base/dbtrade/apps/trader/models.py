@@ -151,6 +151,9 @@ TRADE_TYPE_CHOICES = (('BUY', 'Buy'), ('SELL', 'Sell'))
 
 class TradeOrder(TimeStampModel):
     
+    #: Which user this trade belongs to
+    user = models.ForeignKey(User, null=True)
+    
     #: Don't execute trade until the parent trade has first been executed.  Can be used for buy/sell plans, etc
     parent_trade = models.ForeignKey('TradeOrder', null=True)
     
