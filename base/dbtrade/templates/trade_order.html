@@ -3,6 +3,7 @@
 
 {% block content %}
 <div class="trade">
+	<h1>{{ heading }}</h1>
 	<form action="?save" method="post">
 		{% csrf_token %}
 		{{ form|bootstrap }}

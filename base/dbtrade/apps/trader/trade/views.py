@@ -73,11 +73,16 @@ def trade(request, trade_type):
                         'BUY': 'Create Purchase Order',
                         'SELL': 'Create Sell Order'
                         }
+    heading_text_dict = {
+                         'BUY': 'Buy Bitcoins',
+                         'SELL': 'Sell Bitcoins'
+                         }
     env = {
+           'heading': heading_text_dict[trade_type],
            'submit_text': submit_text_dict[trade_type],
            'form': form,
            'trade': trade,
-           'trade_type': trade_type
+           'trade_type': trade_type,
            }
     return render_to_response(template, RequestContext(request, env))
 
