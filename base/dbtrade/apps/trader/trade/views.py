@@ -69,8 +69,12 @@ def trade(request, trade_type):
             trade = form.save()
             return HttpResponseRedirect('/trade/%s/' % trade_type.lower())
     
+    submit_text_dict = {
+                        'BUY': 'Create Purchase Order',
+                        'SELL': 'Create Sell Order'
+                        }
     env = {
-           'submit_text': 'Create Purchase Order',
+           'submit_text': submit_text_dict[trade_type],
            'form': form,
            'trade': trade,
            'trade_type': trade_type
