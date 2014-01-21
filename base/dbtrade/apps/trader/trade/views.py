@@ -35,8 +35,8 @@ def login(request):
 DELTA_TYPE_CHOICES = (('hours', 'Hours'), ('days', 'Days'), ('weeks', 'Weeks'))
 
 class TradeForm(forms.ModelForm):
-    expires = forms.IntegerField()
-    expires_type = forms.ChoiceField(widget=forms.RadioSelect, choices=DELTA_TYPE_CHOICES)
+    expires = forms.IntegerField(label='Expires In')
+    expires_type = forms.ChoiceField(widget=forms.RadioSelect, choices=DELTA_TYPE_CHOICES, label='')
     
     class Meta:
         model = TradeOrder

@@ -164,10 +164,12 @@ class TradeOrder(TimeStampModel):
     type = models.CharField(max_length=32, choices=TRADE_TYPE_CHOICES, db_index=True)
     
     #: When to trade.  Low for BUY, high for SELL
-    price_point = models.DecimalField(max_digits=12, decimal_places=5, db_index=True)
+    price_point = models.DecimalField(max_digits=12, decimal_places=5, db_index=True,
+                                      verbose_name='Trading Price',
+                                      help_text='Your trade will be executed at this price point.')
     
     #: Amount to trade, in BTC.  In the future, we may allow purchasing in fiat amounts.
-    btc_amount = models.DecimalField(max_digits=18, decimal_places=8)
+    btc_amount = models.DecimalField(max_digits=18, decimal_places=8, verbose_name='BTC Amount')
     
     #: Whether order is still active, or has been canceled.
     active = models.BooleanField(default=True, db_index=True)
