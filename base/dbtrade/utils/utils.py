@@ -1,6 +1,7 @@
 import os, sys
 import time
 import random
+from datetime import datetime, timedelta
 
 #from django.utils.thread_support import currentThread
 from oauth2client.client import AccessTokenRefreshError
@@ -31,6 +32,14 @@ class GlobalRequestMiddleware(object):
             except UserSettings.DoesNotExist:
                 user_settings = UserSettings(user=request.user)
                 user_settings.save()
+            if 'current_cb_balance' not in request.session or \
+            request.session['current_cb_balance']['expires'] < datetime.utcnow():
+                CB_API = get_user_cb_api(request.user)
+                if CB_API != None:
+                    request.session['current_cb_balance'] = {
+                                                             'amount': CB_API.balance,
+                                                             'expires': datetime.utcnow() + timedelta(hours=4)
+                                                             }
 
 
 def clear_all_bids():
