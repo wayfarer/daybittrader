@@ -4,8 +4,8 @@
 {% block content %}
 <div class="trade">
 	<h1>{{ heading }}</h1>
-	{% if cb_balance %}<h3>Coinbase Balance:
-		<strong>{{ cb_balance }}</strong></h3>{% endif %}
+	{% if cb_balance %}<h3 style="color:#666;">Coinbase Balance:
+		<strong>B⃦{{ cb_balance }}</strong> Current {{ trade_type_lower }} price: <strong>{{ current_price }}</strong></h3>{% endif %}
 	<form action="?save" method="post">
 		{% csrf_token %}
 		{{ form|bootstrap }}

@@ -30,6 +30,8 @@ def ticker_save(*args, **kwargs):
         ticker_data = res['data']
         cb_buy_value = CB_API.buy_price(1)
         cb_buy_value_50 = CB_API.buy_price(50)
+        cb_sell_value = CB_API.sell_price(1)
+        cb_sell_value_50 = CB_API.sell_price(50)
         bs_ticker = get_bitstamp_ticker()
         print 'bs_ticker= %s' % str(bs_ticker)
         print 'Saving ticker data!'
@@ -51,6 +53,8 @@ def ticker_save(*args, **kwargs):
                                        buy_value_int=int(ticker_data['buy']['value_int']),
                                        cb_buy_value=cb_buy_value,
                                        cb_buy_value_50=cb_buy_value_50,
+                                       cb_sell_value=cb_sell_value,
+                                       cb_sell_value_50=cb_sell_value_50,
                                        bs_ask = bs_ticker['ask'],
                                        bs_bid = bs_ticker['bid'],
                                        bs_high = bs_ticker['high'],

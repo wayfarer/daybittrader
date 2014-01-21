@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 
 from dbtrade.utils.utils import get_user_cb_api
-from dbtrade.apps.trader.models import TradeOrder
+from dbtrade.apps.trader.models import TradeOrder, TickerHistory
 
 
 @login_required(login_url='/#login-form')
@@ -78,13 +78,20 @@ def trade(request, trade_type):
                          'BUY': 'Buy Bitcoins',
                          'SELL': 'Sell Bitcoins'
                          }
+    current_ticker = TickerHistory.objects.all().order_by('id').reverse()[:1][0]
+    current_price_dict = {
+                          'BUY': current_ticker.cb_buy_value,
+                          'SELL': current_ticker.cb_sell_value
+                          }
     env = {
            'heading': heading_text_dict[trade_type],
            'submit_text': submit_text_dict[trade_type],
            'form': form,
            'trade': trade,
            'trade_type': trade_type,
-           'cb_balance': CB_API.balance
+           'trade_type_lower': trade_type.lower(),
+           'cb_balance': CB_API.balance,
+           'current_price': current_price_dict[trade_type]
            }
     return render_to_response(template, RequestContext(request, env))
 
