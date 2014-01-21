@@ -163,7 +163,10 @@ def _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fe
 
 def home(request):
     if request.user.is_authenticated():
-        return HttpResponseRedirect('/historical/')
+        if not request.user.usersettings.coinbase_oauth_token:
+            return HttpResponseRedirect('/historical/')
+        else:
+            return HttpResponseRedirect('/trade/')
     
     fields_set = False
     for field in fee_defaults:
