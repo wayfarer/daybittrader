@@ -26,7 +26,12 @@
 			var price_val = parseFloat($('#id_price_point').val());
 			var btc_val = parseFloat($('#id_btc_amount').val());
 			var actual_price = btc_val * price_val;
-			$('#actual-price').text(' $' + (Math.round(actual_price * 100) / 100).toString());
+			if(!isNaN(actual_price)) {
+				$('#actual-price').text(' $' + (Math.round(actual_price * 100) / 100).toString());
+			}
+			else {
+				$('#actual-price').text('');
+			}
 		});
 	});
 </script>
