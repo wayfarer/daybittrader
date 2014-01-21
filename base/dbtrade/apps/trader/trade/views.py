@@ -91,6 +91,7 @@ def trade(request, trade_type):
            'form': form,
            'trade': trade,
            'trade_type': trade_type,
+           'cb_balance': request.session['current_cb_balance']['amount']
            }
     return render_to_response(template, RequestContext(request, env))
 
