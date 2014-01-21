@@ -55,13 +55,6 @@ def trade(request, trade_type):
     if CB_API == None:
         return HttpResponseRedirect('/trade/login/?ref=/trade/%s/' % trade_type.lower())
     
-    if 'current_cb_balance' not in request.session or \
-            request.session['current_cb_balance']['expires'] < datetime.utcnow():
-                request.session['current_cb_balance'] = {
-                                                         'amount': CB_API.balance,
-                                                         'expires': datetime.utcnow() + timedelta(hours=4)
-                                                         }
-    
     trade = None
     if request.method == 'POST':
         form = TradeForm(request.POST)
@@ -91,7 +84,7 @@ def trade(request, trade_type):
            'form': form,
            'trade': trade,
            'trade_type': trade_type,
-           'cb_balance': request.session['current_cb_balance']['amount']
+           'cb_balance': CB_API.balance
            }
     return render_to_response(template, RequestContext(request, env))
 
