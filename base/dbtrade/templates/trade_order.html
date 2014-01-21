@@ -1,5 +1,13 @@
 {% extends "base_trade.html" %}
 
 {% block content %}
-Trade here
+<div class="trade">
+	<form action="?save" method="post">
+		{% csrf_token %}
+		{{ form|bootstrap }}
+		<p class="actions">
+			<button type="submit" class="btn btn-large btn-primary">{{ submit_text }}</button>
+		</p>
+	</form>
+</div>
 {% endblock content %}
