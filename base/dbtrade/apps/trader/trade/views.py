@@ -66,6 +66,7 @@ def trade(request, trade_type):
     if request.method == 'POST':
         if form.is_valid():
             form.instance.type = trade_type
+            form.instance.user = request.user
             trade = form.save()
             return HttpResponseRedirect('/trade/%s/' % trade_type.lower())
     
