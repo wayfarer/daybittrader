@@ -20,13 +20,13 @@
 {% block bottom %}
 <script>
 	$(document).ready(function() {
-		$('<span> <span class="priceinfo" id="actual-price"></span></span>').appendTo('label[for="id_price_point"]');
+		$('<span> &nbsp <span class="priceinfo" id="actual-price"></span></span>').appendTo('label[for="id_price_point"]');
 		$('#id_price_point, #id_btc_amount').keyup(function() {
 			this.value = this.value.replace(/[^0-9\.]/g, '');
 			var price_val = parseFloat($('#id_price_point').val());
 			var btc_val = parseFloat($('#id_btc_amount').val());
 			var actual_price = btc_val * price_val;
-			$('#actual_price').text(Math.round(actual_price * 100) / 100);
+			$('#actual-price').text(' $' + (Math.round(actual_price * 100) / 100).toString());
 		});
 	});
 </script>
