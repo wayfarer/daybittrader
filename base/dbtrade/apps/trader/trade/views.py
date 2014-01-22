@@ -90,9 +90,9 @@ def trade(request, trade_type):
     for trade in current_trades:
         trade_data = {
                       'type': trade.type,
-                      'price_point': trade.price_point,
-                      'btc_amount': trade.btc_amount,
-                      'cost': trade.btc_amount * trade.price_point,
+                      'price_point': '%.2f' % trade.price_point,
+                      'btc_amount': float(trade.btc_amount),#:converting to float strips zeros from right side
+                      'cost': '%.2f' % (trade.btc_amount * trade.price_point),
                       'expired': trade.date_expire < now()
                       }
         trades_data.append(trade_data)
