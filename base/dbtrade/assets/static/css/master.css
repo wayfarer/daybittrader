@@ -73,3 +73,32 @@
 .priceinfo {
 	color: #666;
 }
+
+.trade-BUY, .trade-SELL, .trade-STOP_LOSS {
+	border-radius: 4px;
+	padding: 2px;
+}
+
+.trade-BUY {
+	border: 1px solid blue;
+}
+
+.trade-SELL {
+	border: 1px solid purple;
+}
+
+.trade-STOP_LOSS {
+	border: 1px solid orange;
+}
+
+.trade-BUY strong {
+	color: blue;
+}
+
+.trade-SELL strong {
+	color: purple;
+}
+
+.trade-STOP_LOSS strong {
+	color: orange;
+}
