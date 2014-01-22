@@ -6,7 +6,7 @@
 <ul>
 {% for trade in trades %}
 	<li>{{ trade.type }}: {{ trade.btc_amount }} BTC - ${{ trade.price_point }} (${{ trade.cost }})
-		{% if trade.expired %}<strong style="color:red">EXPIRED</strong></li>
+		{% if trade.expired %}<strong style="color:red">EXPIRED</strong>{% endif %}</li>
 {% endfor %}
 </ul>
 {% endblock sidebar %}
