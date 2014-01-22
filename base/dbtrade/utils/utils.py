@@ -86,4 +86,6 @@ def get_user_cb_api(user):
         except AccessTokenRefreshError:
             print 'AccessTokenRefreshError'
             return None
+        else:
+            return CoinBaseAPI(oauth2_credentials=user.usersettings.coinbase_oauth_token)
     return CB_API
