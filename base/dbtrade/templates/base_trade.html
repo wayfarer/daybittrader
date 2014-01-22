@@ -5,10 +5,12 @@
 
 {% block body %}
 <div class="col-md-5">
-	<ul class="nav nav-pills">
-		<li><a href="/trade/buy/">Buy</a></li>
-		<li><a href="/trade/sell/">Sell</a></li>
-	</ul>
+	<div class="clearfix">
+		<ul class="nav nav-pills pull-right" style="padding-top: 20px;">
+			<li><a href="/trade/buy/">Buy</a></li>
+			<li><a href="/trade/sell/">Sell</a></li>
+		</ul>
+	</div>
 	<script>$('.nav-pills li a').each(function() {if(this.href == window.location.href) {$(this).parent().addClass('active');}});</script>
 	{% block sidebar %}{% endblock sidebar %}
 </div>

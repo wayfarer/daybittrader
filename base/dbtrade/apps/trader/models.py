@@ -148,7 +148,7 @@ class EmailNoticeLog(models.Model):
     date_added = models.DateTimeField(auto_now_add=True, db_index=True)
     
 
-TRADE_TYPE_CHOICES = (('BUY', 'Buy'), ('SELL', 'Sell'))
+TRADE_TYPE_CHOICES = (('BUY', 'Buy'), ('SELL', 'Sell'), ('STOP_LOSS', 'Stop Loss'))
 
 
 class TradeOrder(TimeStampModel):

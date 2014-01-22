@@ -1,6 +1,10 @@
 {% extends "base_trade.html" %}
 {% load bootstrap %}
 
+{% block sidebar %}
+<h4 class="clear">Active Trades</h4>
+{% endblock sidebar %}
+
 {% block content %}
 <div class="trade">
 	<h1>{{ heading }}</h1>
