@@ -74,6 +74,11 @@
 	color: #666;
 }
 
+.trade-list {
+	padding-left: 0;
+	list-style: none;
+}
+
 .trade-BUY, .trade-SELL, .trade-STOP_LOSS {
 	border-radius: 4px;
 	padding: 2px;
