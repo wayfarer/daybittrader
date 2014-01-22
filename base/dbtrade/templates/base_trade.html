@@ -4,10 +4,15 @@
 {% endblock head %}
 
 {% block body %}
-<div class="col-md-4">
-	<!--TODO: subnav-->
+<div class="col-md-5">
+	<ul class="nav nav-pills">
+		<li><a href="/trade/buy/">Buy</a></li>
+		<li><a href="/trade/sell/">Sell</a></li>
+	</ul>
+	<script>$('.nav-pills li a').each(function() {if(this.href == window.location.href) {$(this).parent().addClass('active');}});</script>
+	{% block sidebar %}{% endblock sidebar %}
 </div>
-<div class="col-md-8">
+<div class="col-md-7">
 	{% block content %}{% endblock content %}
 </div>
 {% endblock body %}
