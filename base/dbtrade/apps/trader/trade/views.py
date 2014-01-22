@@ -83,6 +83,19 @@ def trade(request, trade_type):
                           'BUY': current_ticker.cb_buy_value,
                           'SELL': current_ticker.cb_sell_value
                           }
+    
+    current_trades = TradeOrder.objects.filter(user=request.user, active=True)
+    trades_data = []
+    for trade in current_trades:
+        trade_data = {
+                      'type': trade.type,
+                      'price_point': trade.price_point,
+                      'btc_amount': trade.btc_amount,
+                      'cost': trade.btc_amount * trade.price_point,
+                      'expired': trade.date_expire > datetime.utcnow()
+                      }
+        trades_data.append(trade_data)
+    
     env = {
            'heading': heading_text_dict[trade_type],
            'submit_text': submit_text_dict[trade_type],
@@ -91,7 +104,8 @@ def trade(request, trade_type):
            'trade_type': trade_type,
            'trade_type_lower': trade_type.lower(),
            'cb_balance': CB_API.balance,
-           'current_price': current_price_dict[trade_type]
+           'current_price': current_price_dict[trade_type],
+           'trades': trades_data
            }
     return render_to_response(template, RequestContext(request, env))
 
