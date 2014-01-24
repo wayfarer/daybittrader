@@ -25,15 +25,31 @@ $(document).ready(function() {
 	    		return '<td>' + arr[0].toFixed(2) + '</td><td>' + arr[1] + '</td><td>' + total.toFixed(2) + '</td>';
 	    	}
 	    	bid_tds = [];
-	    	for(var i=0; i<data.bids; i++) {
+	    	for(var i=0; i<data.bids.length; i++) {
 	    		tds = build_tds(data.bids[i]);
 	    		bid_tds.push(tds);
 	    	}
 	    	ask_tds = [];
-	    	for(var i=0; i<data.asks; i++) {
+	    	for(var i=0; i<data.asks.length; i++) {
 	    		tds = build_tds(data.asks[i]);
 	    		ask_tds.push(tds);
 	    	}
+	    	var top_len = (data.bids.length < data.asks.length) ? data.asks.length : data.bids.length;
+	    	var empty_tds = '<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>';
+	    	var trs = '';
+	    	for(var i=0; i<top_len; i++) {
+	    		var bid_html = bid_tds[i];
+	    		if(!bid_html) {
+	    			bid_html = empty_tds;
+	    		}
+	    		var ask_html = ask_tds[i];
+	    		if(!ask_html) {
+	    			ask_html = empty_tds;
+	    		}
+	    		tr = '<tr>' + bid_html + '<td>&nbsp;&nbsp;</td>' + ask_html + '</tr>';
+	    		trs += tr;
+	    	}
+	    	order_book_tbody.html(trs);
 	    });
     }
 });
