@@ -20,6 +20,20 @@ $(document).ready(function() {
 	    var order_book_channel = pusher.subscribe('order_book');
 	    order_book_channel.bind('data', function(data) {
 	    	console.log(data);
+	    	function build_tds(arr) {
+	    		var total = arr[0] * arr[1];
+	    		return '<td>' + arr[0].toFixed(2) + '</td><td>' + arr[1] + '</td><td>' + total.toFixed(2) + '</td>';
+	    	}
+	    	bid_tds = [];
+	    	for(var i=0; i<data.bids; i++) {
+	    		tds = build_tds(data.bids[i]);
+	    		bid_tds.push(tds);
+	    	}
+	    	ask_tds = [];
+	    	for(var i=0; i<data.asks; i++) {
+	    		tds = build_tds(data.asks[i]);
+	    		ask_tds.push(tds);
+	    	}
 	    });
     }
 });
