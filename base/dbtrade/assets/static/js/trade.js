@@ -7,14 +7,19 @@ $(document).ready(function() {
 	}
 	trades_channel.bind('trade', function(data) {
 		//console.log(data);
-		if(cb_last.length && bs_last.length) {
+		if(bs_last.length) {
 			$('.bs-last').html('$' + data.price.toFixed(2));
-			var estimated_cb_price = data.price * per_of;
-			$('.cb-last').html('$' + estimated_cb_price.toFixed(2) + '*');
+			if(cb_last.length) {
+				var estimated_cb_price = data.price * per_of;
+				$('.cb-last').html('$' + estimated_cb_price.toFixed(2) + '*');
+			}
 		}
 	});
-    /*var order_book_channel = pusher.subscribe('order_book');
-    order_book_channel.bind('data', function(data) {
-    	console.log(data);
-    });*/
+	order_book_tbody = $('#order-book');
+	if(order_book_tbody.length) {
+	    var order_book_channel = pusher.subscribe('order_book');
+	    order_book_channel.bind('data', function(data) {
+	    	console.log(data);
+	    });
+    }
 });
