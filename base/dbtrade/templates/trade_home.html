@@ -1,11 +1,12 @@
 {% extends "base_trade.html" %}
 
 {% block content %}
+<h2>Latest Bitstamp Trades</h2>
 <h4>
-	<small>Bitstamp: <strong class="bs-last">${{ bitstamp_price }}</strong>
+	<strong class="bs-last">${{ bitstamp_price }}</strong>
 	<span style="font-size: .8em">
 		<a href="https://bitcointalk.org/index.php?topic=392422.0" target="_blank">Why Bitstamp?</a>
-	</span></small>
+	</span>
 </h4>
 <div class="depth">
 	<div class="chart">&nbsp;</div>

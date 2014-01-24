@@ -22,7 +22,7 @@ $(document).ready(function() {
 	    	console.log(data);
 	    	function build_tds(arr) {
 	    		var total = parseFloat(arr[0]) * parseFloat(arr[1]);
-	    		return '<td>' + arr[0] + '</td><td>' + arr[1] + '</td><td>' + total.toFixed(2) + '</td>';
+	    		return '<td>$' + arr[0] + '</td><td>' + arr[1] + '</td><td>$' + total.toFixed(2) + '</td>';
 	    	}
 	    	bid_tds = [];
 	    	for(var i=0; i<data.bids.length; i++) {
