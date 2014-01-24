@@ -105,7 +105,7 @@ def trade(request, trade_type):
            'trade_type': trade_type,
            'trade_type_lower': trade_type.lower(),
            'cb_balance': CB_API.balance,
-           'current_price': current_price_dict[trade_type],
+           'current_price': '%.2f' % current_price_dict[trade_type],
            'bitstamp_price': '%.2f' % current_ticker.bs_last,
            'trades': trades_data
            }
