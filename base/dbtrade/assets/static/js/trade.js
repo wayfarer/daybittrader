@@ -21,8 +21,8 @@ $(document).ready(function() {
 	    order_book_channel.bind('data', function(data) {
 	    	console.log(data);
 	    	function build_tds(arr) {
-	    		var total = arr[0] * arr[1];
-	    		return '<td>' + arr[0].toFixed(2) + '</td><td>' + arr[1] + '</td><td>' + total.toFixed(2) + '</td>';
+	    		var total = parseFloat(arr[0]) * parseFloat(arr[1]);
+	    		return '<td>' + arr[0] + '</td><td>' + arr[1] + '</td><td>' + total.toFixed(2) + '</td>';
 	    	}
 	    	bid_tds = [];
 	    	for(var i=0; i<data.bids.length; i++) {
