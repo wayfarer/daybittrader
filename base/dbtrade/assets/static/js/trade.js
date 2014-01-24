@@ -17,7 +17,7 @@ $(document).ready(function() {
 	});
 	order_book_tbody = $('#order-book');
 	if(order_book_tbody.length) {
-	    var order_book_channel = pusher.subscribe('order_book');
+	    var order_book_channel = pusher.subscribe('live_orders');
 	    order_book_channel.bind('data', function(data) {
 	    	console.log(data);
 	    });
