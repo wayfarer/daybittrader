@@ -15,7 +15,8 @@
 <div class="trade">
 	<h1>{{ heading }}</h1>
 	{% if cb_balance %}<h4 style="color:#666;">Coinbase Balance:
-		<strong>{{ cb_balance }}</strong> &nbsp; Current {{ trade_type_lower }} price: <strong>{{ current_price }}</strong></h4>{% endif %}
+		<strong>{{ cb_balance }}</strong> &nbsp; Current {{ trade_type_lower }} price: <strong>${{ current_price }}*</strong><br>
+		<small>Bitstamp: <strong class="bs-last">${{ bitstamp_price }}</strong> <a href="https://bitcointalk.org/index.php?topic=392422.0" target="_blank">Why Bitstamp?</a></small></h4>{% endif %}
 	<form action="?save" method="post">
 		{% csrf_token %}
 		{{ form|bootstrap }}
@@ -23,6 +24,7 @@
 			<button type="submit" class="btn btn-large btn-primary">{{ submit_text }}</button>
 		</p>
 	</form>
+	<p>*<small>Estimate only</small></p>
 </div>
 <script>$('.trade label:eq(3)').hide();</script>
 {% endblock content %}
