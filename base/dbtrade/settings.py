@@ -215,6 +215,8 @@ COINBASE_ID = os.environ.get('DBT_CB_ID', None)
 COINBASE_SECRET = os.environ.get('DBT_CB_SECRET', None)
 COINBASE_CALLBACK_URL = 'https://daybittrader.com/connect/coinbase/callback/'
 
+BS_PUSHER_APP_ID = 'de504dc5763aeef9ff52'
+
 
 #: DO NOT EDIT BELOW THIS LINE!!
 #: ====================================================

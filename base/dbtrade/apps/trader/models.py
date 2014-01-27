@@ -176,6 +176,10 @@ class TradeOrder(TimeStampModel):
     #: Whether order is still active, or has been canceled.
     active = models.BooleanField(default=True, db_index=True)
     
+    #: Used as a filter in special cases.  Sometimes we need to lock a job to make sure only one worker operates on
+    #: it at a time in a distributed queue environment.
+    locked = models.BooleanField(default=False, db_index=False)
+    
     #: When trade order expires.  We require this to be set, for now.
     date_expire = models.DateTimeField(db_index=True)
     

@@ -5,3 +5,4 @@ django-celery
 redis
 coinbase
 django-bootstrap-form
+websocket-client

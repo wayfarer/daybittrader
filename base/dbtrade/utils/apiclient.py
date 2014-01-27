@@ -2,6 +2,7 @@ import hmac, base64, hashlib, urllib, urllib2, time, json, time
 
 import httplib2
 from coinbase import CoinbaseAccount
+from coinbase.config import COINBASE_ENDPOINT
 from django.conf import settings
 from oauth2client.client import OAuth2WebServerFlow
 
@@ -148,6 +149,30 @@ class CoinBaseAPI(CoinbaseAccount):
         super(CoinBaseAPI, self).__init__(oauth2_credentials, api_key)
         if oauth2_credentials:
             self.http = httplib2.Http(ca_certs='/etc/ssl/certs/ca-certificates.crt')
+            
+    def sell(self, qty):
+        url = COINBASE_ENDPOINT + '/sells'
+        request_data = {
+                        'qty': qty
+                        }
+        response = self.session.post(url=url, data=json.dumps(request_data), params=self.global_request_params)
+        response_parsed = response.json()
+        if response_parsed['success'] == False:
+            #: TODO: raise exception?
+            pass
+        return response_parsed
+    
+    def buy(self, qty):
+        url = COINBASE_ENDPOINT + '/buys'
+        request_data = {
+                        'qty': qty
+                        }
+        response = self.session.post(url=url, data=json.dumps(request_data), params=self.global_request_params)
+        response_parsed = response.json()
+        if response_parsed['success'] == False:
+            #: TODO: raise exception?
+            pass
+        return response_parsed
 
 
 coinbase_oauth_client = OAuth2WebServerFlow(settings.COINBASE_ID, settings.COINBASE_SECRET, 'buy sell balance',
