@@ -198,12 +198,15 @@ def trade(trade_id):
         return
     CB_API = get_user_cb_api(trade_order.user)
     if not CB_API:
-        print 'Oauth credentials not valid!'
+        error_message = 'Oauth credentials not valid!'
+        print error_message
         trade_order.active = False
         trade_order.locked = False
         trade_order.save()
-        #: TODO: Should probably log this in TradeOrderLog somehow
+        TradeOrderLog(trade_order=trade_order, type=trade_order.type, btc_amount=trade_order.btc_amount,
+                      status='FAIL', message=error_message).save()
         return
+    
     if trade_order.type == 'SELL' or trade_order.type == 'STOP_LOSS':
         price_point = CB_API.sell_price(trade_order.btc_amount)
     elif trade_order.type == 'BUY':
@@ -216,14 +219,28 @@ def trade(trade_id):
         
     if do_trade:
         if trade_order.type == 'SELL' or trade_order.type == 'STOP_LOSS':
-            CB_API.buy()
-            #: TODO: logging
+            result = CB_API.buy()
         elif trade_order.type == 'BUY':
-            CB_API.sell()
-            #: TODO: logging
-    else:
-        print 'Not performing trade due to quote of %f.' % price_point
-        #: TODO: Should probably also log this in TradeOrderLog
-    
-    
+            result = CB_API.sell()
         
+        if result['success']:
+            status='SUCCESS'
+            message = None
+            price_point = Decimal(result['transfer']['total']['amount']) / trade_order.btc_amount
+        else:
+            status = 'FAIL'
+            message = result['errors'][0]
+            price_point = None
+        
+        trade_order.active = False
+        trade_order.locked = False
+        trade_order.save()
+        TradeOrderLog(trade_order=trade_order, type=trade_order.type, btc_amount=trade_order.btc_amount,
+                      price_point=price_point, status=status, message=message).save()
+    else:
+        error_message = 'Not performing trade due to quote of %f.' % price_point
+        print error_message
+        trade_order.locked = False
+        trade_order.save()
+        TradeOrderLog(trade_order=trade_order, type=trade_order.type, btc_amount=trade_order.btc_amount,
+                      status='FAIL', message=error_message).save()

@@ -202,7 +202,13 @@ class TradeOrderLog(LogModel):
     btc_amount = models.DecimalField(max_digits=18, decimal_places=8)
     
     #: The actual price traded at.  Could be lower or higher than original price point
-    price_point = models.DecimalField(max_digits=12, decimal_places=5)
+    price_point = models.DecimalField(max_digits=12, decimal_places=5, null=True)
+    
+    #: SUCCESS or FAIL
+    status = models.CharField(max_length=32)
+    
+    #: Optional message desribing anything of interest to do with this trade.  Probably failure reason.
+    message = models.TextField(null=True)
 
 
 class UserSettings(models.Model):
