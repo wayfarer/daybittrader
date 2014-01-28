@@ -178,8 +178,8 @@ LOGIN_URL = '/'
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'dbt-maincache',
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'dbt_cache',
     }
 }
 
