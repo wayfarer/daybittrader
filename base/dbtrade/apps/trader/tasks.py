@@ -69,6 +69,7 @@ def ticker_save(*args, **kwargs):
                                        )
         ticker_history.save()
         trader.delay(ticker_history.id)
+        do_trades.delay(str(ticker_history.cb_buy_value), str(ticker_history.cb_sell_value))
         email_notice.delay(str(ticker_history.buy_value), str(ticker_history.cb_buy_value), str(ticker_history.bs_ask))
     else:
         print 'Ticker data result other than success: "%s"' % res['result']
@@ -168,7 +169,7 @@ def live_bs_connect():
             print data
             estimated_buy_price = Decimal(str(data['price'])) * buy_baseline
             estimated_sell_price = Decimal(str(data['price'])) * sell_baseline
-            do_trades.delay(estimated_buy_price, estimated_sell_price)
+            do_trades.delay(str(estimated_buy_price), str(estimated_sell_price))
         if time.time() - start_time >= timeout_length:
             #: Don't continue past timeout_length.  A new task with new price baselines will replace this one
             c.close()
@@ -177,6 +178,11 @@ def live_bs_connect():
         
 @task(queue='do_trades', ignore_results=True, name='dbtrade.apps.trader.tasks.do_trades')
 def do_trades(estimated_buy_price, estimated_sell_price):
+    print 'estimated_buy_price=%s' % estimated_buy_price
+    print 'estimated_sell_price=%s' % estimated_sell_price
+    estimated_buy_price = Decimal(estimated_buy_price)
+    estimated_sell_price = Decimal(estimated_sell_price)
+    
     def _queue_trades(*args):
         for trade_queryset in args:
             trade_queryset.select_for_update().update(locked=True)
