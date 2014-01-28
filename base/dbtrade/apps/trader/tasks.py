@@ -145,8 +145,8 @@ def email_notice(mtgox_price, coinbase_price, bitstamp_price):
 def live_bs_connect():
     #: get latest cb_buy_value, cb_sell_value, bs_last, calculate baselines
     ticker = TickerHistory.objects.all().order_by('id').reverse()[:1][0]
-    buy_baseline = ticker.bs_last / ticker.cb_buy_value
-    sell_baseline = ticker.bs_last / ticker.cb_sell_value
+    buy_baseline = ticker.cb_buy_value / ticker.bs_last
+    sell_baseline = ticker.cb_sell_value / ticker.bs_last
     print 'Starting live_bs_connect'
     print 'buy_baseline=%s' % str(buy_baseline)
     print 'sell_baseline=%s' % str(sell_baseline)
@@ -196,7 +196,6 @@ def do_trades(estimated_buy_price, estimated_sell_price):
     _queue_trades(buy_trades, sell_trades, stoploss_trades)
 
 
-#: TODO: separate this task into a different queue than do_trades, which needs a concurrency of 1
 @task(queue='trade', ignore_results=True, name='dbtrade.apps.trader.tasks.trade')
 def trade(trade_id):
     try:
