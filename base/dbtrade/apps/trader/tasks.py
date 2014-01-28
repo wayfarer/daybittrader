@@ -6,6 +6,7 @@ from pprint import pprint
 from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import Q
+from django.utils.timezone import now
 
 from celery.task import task
 from celery.task import periodic_task
@@ -182,7 +183,7 @@ def do_trades(estimated_buy_price, estimated_sell_price):
             for trade_order in trade_queryset:
                 trade(trade_order.id)
     
-    _trade_queryset_shared = TradeOrder.objects.filter(locked=False, active=True, date_expire__gt=datetime.utcnow())
+    _trade_queryset_shared = TradeOrder.objects.filter(locked=False, active=True, date_expire__gt=now())
     buy_trades = _trade_queryset_shared.filter(type='BUY', price_point__gte=estimated_buy_price)
     sell_trades = _trade_queryset_shared.filter(type='SELL', price_point__lte=estimated_sell_price)
     stoploss_trades = _trade_queryset_shared.filter(type='STOP_LOSS', price_point__gte=estimated_sell_price)
