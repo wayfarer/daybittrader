@@ -142,7 +142,7 @@ def email_notice(mtgox_price, coinbase_price, bitstamp_price):
                name='dbtrade.apps.trader.tasks.live_bs_connect')
 def live_bs_connect():
     #: get latest cb_buy_value, cb_sell_value, bs_last, calculate baselines
-    ticker = TickerHistory.objects.all().reverse()[:1][0]
+    ticker = TickerHistory.objects.all().order_by('id').reverse()[:1][0]
     buy_baseline = ticker.bs_last / ticker.cb_buy_value
     sell_baseline = ticker.bs_last / ticker.cb_sell_value
     print 'Starting live_bs_connect'
