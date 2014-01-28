@@ -209,6 +209,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 #EMAIL_HOST_USER = 'notifications@daybittrader.com'
 EMAIL_HOST_USER = 'dbtnotifications@gmail.com'
+#: This password is the same for both addresses
 EMAIL_HOST_PASSWORD = 'kzQbED8HV6SC6wEHFK8R'
 EMAIL_USE_TLS = True
 
