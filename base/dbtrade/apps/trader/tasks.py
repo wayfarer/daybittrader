@@ -174,7 +174,7 @@ def live_bs_connect():
             break
         
         
-@task(queue='trade', ignore_results=True, name='dbtrade.apps.trader.tasks.do_trades')
+@task(queue='do_trades', ignore_results=True, name='dbtrade.apps.trader.tasks.do_trades')
 def do_trades(estimated_buy_price, estimated_sell_price):
     def _queue_trades(*args):
         for trade_queryset in args:
@@ -189,6 +189,7 @@ def do_trades(estimated_buy_price, estimated_sell_price):
     _queue_trades(buy_trades, sell_trades, stoploss_trades)
 
 
+#: TODO: separate this task into a different queue than do_trades, which needs a concurrency of 1
 @task(queue='trade', ignore_results=True, name='dbtrade.apps.trader.tasks.trade')
 def trade(trade_id):
     try:
