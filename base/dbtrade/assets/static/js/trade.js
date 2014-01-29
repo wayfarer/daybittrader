@@ -18,7 +18,7 @@ $(document).ready(function() {
 		if(bs_last_list.length) {
 			total = data.price * data.amount;
 			total = total.toFixed(2);
-			var tr = '<tr><td>' + data.amount + '</td><td>$' + data.price.toFixed(2) + '</td><td>' + total + '</td></tr>';
+			var tr = '<tr><td>' + data.amount + '</td><td>$' + data.price.toFixed(2) + '</td><td>$' + total + '</td></tr>';
 			bs_last_list.each(function() {
 				$(tr).prependTo(this);
 			});
