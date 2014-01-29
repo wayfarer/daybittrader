@@ -16,14 +16,16 @@ $(document).ready(function() {
 			}
 		}
 		if(bs_last_list.length) {
-			var tr = '<tr><td>' + data.amount + '</td><td>$' + data.price.toFixed(2) + '</td></tr>';
+			total = data.price * data.amount;
+			total = total.toFixed(2);
+			var tr = '<tr><td>' + data.amount + '</td><td>$' + data.price.toFixed(2) + '</td><td>' + total + '</td></tr>';
 			bs_last_list.each(function() {
 				$(tr).prependTo(this);
 			});
 			list_len += 1;
-			if(list_len > 30) {
+			if(list_len > 40) {
 				bs_last_list.each(function() {
-					$(this).find('tr').eq(30).remove();
+					$(this).find('tr').eq(40).remove();
 					list_len -= 1;
 				});
 			}
