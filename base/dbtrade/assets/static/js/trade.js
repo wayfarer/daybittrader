@@ -1,7 +1,8 @@
 $(document).ready(function() {
 	var pusher = new Pusher('de504dc5763aeef9ff52');
 	var trades_channel = pusher.subscribe('live_trades');
-	var cb_last = $('.cb-last'), bs_last = $('.bs-last');
+	var cb_last = $('.cb-last'), bs_last = $('.bs-last'), bs_last_list = $('.bs-last-list');
+	var list_len = 0;
 	if(cb_last.length && bs_last.length) {
 		var per_of = parseFloat(cb_last.eq(0).html().replace(/[^0-9\.]/g, '')) / parseFloat(bs_last.eq(0).html().replace(/[^0-9\.]/g, ''));
 	}
@@ -12,6 +13,19 @@ $(document).ready(function() {
 			if(cb_last.length) {
 				var estimated_cb_price = data.price * per_of;
 				$('.cb-last').html('$' + estimated_cb_price.toFixed(2) + '*');
+			}
+		}
+		if(bs_last_list.length) {
+			var tr = '<tr><td>' + data.amount + '</td><td>$' + data.price.toFixed(2) + '</td></tr>';
+			bs_last_list.each(function() {
+				$(tr).prependTo(this);
+			});
+			list_len += 1;
+			if(list_len > 30) {
+				bs_last_list.each(function() {
+					$(this).find('tr').eq(30).remove();
+					list_len -= 1;
+				});
 			}
 		}
 	});

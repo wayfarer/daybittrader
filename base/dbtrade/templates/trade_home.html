@@ -1,5 +1,17 @@
 {% extends "base_trade.html" %}
 
+{% block aside %}
+<table class="table">
+	<thead>
+		<tr>
+			<th>Amount</th>
+			<th>Price</th>
+		</tr>
+	</thead>
+	<tbody class="bs-last-list"></tbody>
+</table>
+{% endblock aside %}
+
 {% block content %}
 <h2>Latest Bitstamp Trades</h2>
 <h4>

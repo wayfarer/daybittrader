@@ -13,6 +13,9 @@
 			<li><a href="/trade/sell/">Sell</a></li>
 		</ul>
 	</div>
+	<div class="aside">
+	{% block aside %}{% endblock aside %}
+	</div>
 	<script>$('.nav-pills li a').each(function() {if(this.href == window.location.href) {$(this).parent().addClass('active');}});</script>
 	{% block sidebar %}{% endblock sidebar %}
 </div>
