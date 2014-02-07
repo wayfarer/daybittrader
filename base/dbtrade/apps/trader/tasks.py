@@ -237,9 +237,9 @@ def trade(trade_id):
         
     if do_trade:
         if trade_order.type == 'SELL' or trade_order.type == 'STOP_LOSS':
-            result = CB_API.sell(trade_order.btc_amount)
+            result = CB_API.sell(float(trade_order.btc_amount))
         elif trade_order.type == 'BUY':
-            result = CB_API.buy(trade_order.btc_amount)
+            result = CB_API.buy(float(trade_order.btc_amount))
         
         if result['success']:
             status='SUCCESS'
