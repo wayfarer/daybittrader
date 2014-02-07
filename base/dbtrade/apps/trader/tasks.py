@@ -185,9 +185,9 @@ def do_trades(estimated_buy_price, estimated_sell_price):
     
     def _queue_trades(*args):
         for trade_queryset in args:
-            trade_orders = trade_queryset.select_for_update()
-            trade_orders.update(locked=True)
-            for trade_order in trade_orders:
+            #trade_orders = trade_queryset.select_for_update()
+            trade_queryset.update(locked=True)
+            for trade_order in trade_queryset:
                 print trade_order.id
                 trade.delay(trade_order.id)
     
