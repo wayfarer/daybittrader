@@ -227,14 +227,15 @@ def trade(trade_id):
         return
     
     if trade_order.type == 'SELL' or trade_order.type == 'STOP_LOSS':
-        price_point = CB_API.sell_price(trade_order.btc_amount)
+        quote_price = CB_API.sell_price(float(trade_order.btc_amount))
     elif trade_order.type == 'BUY':
-        price_point = CB_API.buy_price(trade_order.btc_amount)
+        quote_price = CB_API.buy_price(float(trade_order.btc_amount))
     
+    requested_quote = trade_order.price_point * trade_order.btc_amount
     if trade_order.type == 'SELL':
-        do_trade = price_point >= trade_order.price_point
+        do_trade = quote_price >= requested_quote
     elif trade_order.type == 'BUY' or trade_order.type == 'STOP_LOSS':
-        do_trade = price_point <= trade_order.price_point
+        do_trade = quote_price <= requested_quote
         
     if do_trade:
         if trade_order.type == 'SELL' or trade_order.type == 'STOP_LOSS':
