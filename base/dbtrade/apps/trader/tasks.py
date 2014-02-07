@@ -259,7 +259,7 @@ def trade(trade_id):
         TradeOrderLog(trade_order=trade_order, type=trade_order.type, btc_amount=trade_order.btc_amount,
                       price_point=price_point, status=status, message=message).save()
     else:
-        error_message = 'Not performing trade due to quote of %f.' % price_point
+        error_message = 'Not performing trade due to quote of %f.' % quote_price
         print error_message
         trade_order.locked = False
         trade_order.save()
