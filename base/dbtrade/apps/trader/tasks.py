@@ -185,8 +185,9 @@ def do_trades(estimated_buy_price, estimated_sell_price):
     
     def _queue_trades(*args):
         for trade_queryset in args:
-            trade_queryset.select_for_update().update(locked=True)
-            for trade_order in trade_queryset:
+            trade_orders = trade_queryset.select_for_update()
+            trade_orders.update(locked=True)
+            for trade_order in trade_orders:
                 print trade_order.id
                 trade.delay(trade_order.id)
     
@@ -204,6 +205,10 @@ def trade(trade_id):
     except TradeOrder.DoesNotExist:
         print 'Trade id: %d does not exist!' % trade_id
         return
+    if not trade_order.active:
+        print 'Trade is not active, fails sanity check!'
+        return
+    
     CB_API = get_user_cb_api(trade_order.user)
     if not CB_API:
         error_message = 'Oauth credentials not valid!'
