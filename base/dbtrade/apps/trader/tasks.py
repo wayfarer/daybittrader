@@ -185,10 +185,13 @@ def do_trades(estimated_buy_price, estimated_sell_price):
     
     def _queue_trades(*args):
         for trade_queryset in args:
+            #: This makes it so the for loop doesn't work:
             #trade_orders = trade_queryset.select_for_update()
-            trade_queryset.update(locked=True)
+            #trade_queryset.update(locked=True)
             for trade_order in trade_queryset:
                 print trade_order.id
+                trade_order.locked = True
+                trade_order.save()
                 trade.delay(trade_order.id)
     
     _trade_queryset_shared = TradeOrder.objects.filter(locked=False, active=True, date_expire__gt=now())
@@ -208,6 +211,8 @@ def trade(trade_id):
     if not trade_order.active:
         print 'Trade is not active, fails sanity check!'
         return
+    
+    print 'trade(%d)' % trade_id
     
     CB_API = get_user_cb_api(trade_order.user)
     if not CB_API:
