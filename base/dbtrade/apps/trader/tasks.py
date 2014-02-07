@@ -220,6 +220,7 @@ def trade(trade_id):
         print error_message
         trade_order.active = False
         trade_order.locked = False
+        trade_order.completion_status = 'FAIL'
         trade_order.save()
         TradeOrderLog(trade_order=trade_order, type=trade_order.type, btc_amount=trade_order.btc_amount,
                       status='FAIL', message=error_message).save()
@@ -252,6 +253,7 @@ def trade(trade_id):
         
         trade_order.active = False
         trade_order.locked = False
+        trade_order.completion_status = status
         trade_order.save()
         TradeOrderLog(trade_order=trade_order, type=trade_order.type, btc_amount=trade_order.btc_amount,
                       price_point=price_point, status=status, message=message).save()

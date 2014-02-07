@@ -180,6 +180,9 @@ class TradeOrder(TimeStampModel):
     #: it at a time in a distributed queue environment.
     locked = models.BooleanField(default=False, db_index=False)
     
+    #: SUCCESS or FAIL
+    completion_status = models.CharField(max_length=32, null=True, db_index=True)
+    
     #: When trade order expires.  We require this to be set, for now.
     date_expire = models.DateTimeField(db_index=True)
     
