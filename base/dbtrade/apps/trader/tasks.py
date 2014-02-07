@@ -187,7 +187,7 @@ def do_trades(estimated_buy_price, estimated_sell_price):
         for trade_queryset in args:
             trade_queryset.select_for_update().update(locked=True)
             for trade_order in trade_queryset:
-                trade(trade_order.id)
+                trade.delay(trade_order.id)
     
     _trade_queryset_shared = TradeOrder.objects.filter(locked=False, active=True, date_expire__gt=now())
     buy_trades = _trade_queryset_shared.filter(type='BUY', price_point__gte=estimated_buy_price)
