@@ -12,7 +12,7 @@
 {% endblock sidebar %}
 
 {% block content %}
-<div class="trade">
+<div class="trade {{ trade.type }}">
 	<h1>{{ heading }}</h1>
 	{% if cb_balance %}<h4 style="color:#666;">Coinbase Balance:
 		<strong>{{ cb_balance }}</strong> &nbsp; Current {{ trade_type_lower }} price: <strong class="cb-last cb-{{ trade_type }}">${{ current_price }}*</strong><br>

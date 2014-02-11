@@ -68,4 +68,28 @@ $(document).ready(function() {
 	    	order_book_tbody.html(trs);
 	    });
     }
+    
+    $('.trade form').submit(function() {
+    	var last_price = parseFloat($('.cb-last').text().replace(/\$/, '').replace(/\*/, ''));
+    	var price_point_str = $('#id_price_point').val();
+    	if(!price_point_str || price_point_str.match(/[^0-9\.]/)) {
+    		return true;
+    	}
+    	var price_point = parseFloat(price_point_str);
+    	if($(this).parents('.trade').hasClass('BUY')) {
+    		if(price_point >= last_price) {
+    			return confirm('At the chosen price, this could cause the buy order to be executed immediately.  Are you sure you want to proceed?');
+    		}
+    	}
+    	else if($(this).parents('.trade').hasClass('SELL')) {
+    		if(price_point <= last_price) {
+    			return confirm('At the chosen price, this could cause the sell order to be executed immediately.  Are you sure you want to proceed?');
+    		}
+    	}
+    	else if($(this).parents('.trade').hasClass('STOP_LOSS')) {
+    		if(price_point >= last_price) {
+    			return confirm('At the chosen price, this could cause the stop loss to be executed immediately.  Are you sure you want to proceed?');
+    		}
+    	}
+    });
 });
