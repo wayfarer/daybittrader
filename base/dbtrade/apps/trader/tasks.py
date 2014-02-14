@@ -110,8 +110,8 @@ def email_notice(mtgox_price, coinbase_price, bitstamp_price):
             print 'Found %d matching notices...' % emails.count()
             for email in emails:
                 max_date = now - timedeltas[email.frequency]
-                recent_logs = EmailNoticeLog.objects.filter(email_notice=email,date_added__gte=max_date)
-                recent_log = recent_logs.order_by('id').reverse()[:1]
+                all_logs = EmailNoticeLog.objects.filter(email_notice=email,date_added__gte=max_date)
+                recent_log = all_logs.order_by('id').reverse()[:1]
                 try:
                     recent_log[0]
                 except IndexError:
@@ -122,7 +122,7 @@ def email_notice(mtgox_price, coinbase_price, bitstamp_price):
                                                                                           email.email)
                     continue
                 
-                if email.max_send != None and recent_logs.count() + 1 >= email.max_send:
+                if email.max_send != None and all_logs.count() + 1 >= email.max_send:
                     email.active = False
                     
                 message = '%s\nYour price notification was activated due to price of $%s on %s.\n\n' % (str(now),
