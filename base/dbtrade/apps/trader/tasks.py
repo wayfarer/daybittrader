@@ -138,6 +138,8 @@ def email_notice(mtgox_price, coinbase_price, bitstamp_price):
                 
                 email.last_sent = datetime.now()
                 email.save()
+                EmailNoticeLog(email_notice=email, notice_type=point.upper(), price=price,
+                               market=market.upper()).save()
                 
 
 @periodic_task(queue='live_connect', run_every=timedelta(seconds=600), ignore_results=True,
