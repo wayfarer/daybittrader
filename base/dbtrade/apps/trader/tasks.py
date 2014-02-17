@@ -11,8 +11,10 @@ from django.utils.timezone import now
 from celery.task import task
 from celery.task import periodic_task
 from celery.task.schedules import crontab
+from celery.exceptions import SoftTimeLimitExceeded
 
-from dbtrade.apps.trader.models import TickerHistory, EmailNotice, EmailNoticeLog, TradeOrder, TradeOrderLog
+from dbtrade.apps.trader.models import (TickerHistory, IntervalHistory, EmailNotice, EmailNoticeLog,
+                                        TradeOrder, TradeOrderLog)
 from dbtrade.apps.trader.utils.my_api_client import API, CB_API
 from dbtrade.apps.trader.utils.utils import auto_trade
 from dbtrade.utils.utils import get_user_cb_api
@@ -27,8 +29,17 @@ def trader(ticker_id):
     auto_trade(current_ticker, buy_mode='hold', sell_mode='hold')
 
 
-@periodic_task(queue='ticker', run_every=timedelta(seconds=600), ignore_result=True, name='dbtrade.apps.trader.tasks.ticker_save')
+@periodic_task(queue='ticker', run_every=timedelta(seconds=600), name='dbtrade.apps.trader.tasks.ticker_save')
 def ticker_save(*args, **kwargs):
+    try:
+        _ticker_save(*args, **kwargs)
+    except SoftTimeLimitExceeded:
+        #: TODO: handle this occurance more intelligently
+        print 'Soft Timout Limit of %d seconds exceeded!' % settings.CELERYD_TASK_SOFT_TIME_LIMIT
+
+
+def _ticker_save(*args, **kwargs):
+    #: TODO: more intelligent handling of various errors with various APIs
     res = API.get_ticker()
     if res['result'] == 'success':
         ticker_data = res['data']
@@ -73,10 +84,37 @@ def ticker_save(*args, **kwargs):
         email_notice.delay(str(ticker_history.buy_value), str(ticker_history.cb_buy_value), str(ticker_history.bs_ask))
     else:
         print 'Ticker data result other than success: "%s"' % res['result']
+
+
+def _interval_history(interval_type):
+    most_recent_ticker = TickerHistory.objects.all().order_by('id').reverse()[:1][0]
+    if datetime.now() - most_recent_ticker.date_added > timedelta(minutes=20):
+        #: If most recent ticker is older than 20 minutes, something is wrong, and this NULL will tell us
+        most_recent_ticker = None
+    interval = IntervalHistory(ticker=most_recent_ticker, interval=interval_type)
+    interval.save()
+
+        
+@task(queue='interval_history', name='dbtrade.apps.trader.tasks.hourly_interval_history')
+def hourly_interval_history():
+    _interval_history('HOURLY')
+    
+    
+@task(queue='interval_history', name='dbtrade.apps.trader.tasks.daily_interval_history')
+def daily_interval_history():
+    _interval_history('DAILY')
+    
+    
+@task(queue='interval_history', name='dbtrade.apps.trader.tasks.daily_interval_history')
+def weekly_interval_history():
+    _interval_history('WEEKLY')
         
         
 @task(queue='notices', ignore_results=True, name='dbtrade.apps.trader.tasks.email_notice')
 def email_notice(mtgox_price, coinbase_price, bitstamp_price):
+    #: TODO: it's possible, with enough notices in the database, that this will
+    #: Exceed the 15 minute Soft Timeout limit. If this ever gets close to happening,
+    #: we'll need to separate the emails out into their own tasks.
     print 'mtgox_price=%s' % mtgox_price
     print 'coinbase_price=%s' % coinbase_price
     print 'bitstamp_price=%s' % bitstamp_price
@@ -164,7 +202,7 @@ def live_bs_connect():
     print data
     
     start_time = time.time()
-    timeout_length = 600#: 10 minutes
+    timeout_length = 600#: Stops after 10 minutes, so not subject to 15 minute Soft Timeout
     while True:
         event, data = c.get_data()
         if event == 'trade':
@@ -173,13 +211,14 @@ def live_bs_connect():
             estimated_sell_price = Decimal(str(data['price'])) * sell_baseline
             do_trades.delay(str(estimated_buy_price), str(estimated_sell_price))
         if time.time() - start_time >= timeout_length:
-            #: Don't continue past timeout_length.  A new task with new price baselines will replace this one
+            #: Don't continue past timeout_length. A new task with new price baselines will replace this one
             c.close()
             break
         
         
 @task(queue='do_trades', ignore_results=True, name='dbtrade.apps.trader.tasks.do_trades')
 def do_trades(estimated_buy_price, estimated_sell_price):
+    #: If this query ever takes more than 15 minute Soft Timeout limit, we will have a big problem. Unlikely though.
     print 'estimated_buy_price=%s' % estimated_buy_price
     print 'estimated_sell_price=%s' % estimated_sell_price
     estimated_buy_price = Decimal(estimated_buy_price)
@@ -205,6 +244,8 @@ def do_trades(estimated_buy_price, estimated_sell_price):
 
 @task(queue='trade', ignore_results=True, name='dbtrade.apps.trader.tasks.trade')
 def trade(trade_id):
+    #: Fast executing task, should not be subject to Soft Timeout limit of 15 minutes,
+    #: if it every is, something else went wrong and it does its job
     try:
         trade_order = TradeOrder.objects.get(id=trade_id)
     except TradeOrder.DoesNotExist:

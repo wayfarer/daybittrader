@@ -198,6 +198,11 @@ CELERYD_MAX_TASKS_PER_CHILD = 100
 CELERY_ACKS_LATE = True
 CELERYD_PREFETCH_MULTIPLIER = 1
 
+#: 16 minute hard timeout limit for tasks
+CELERYD_TASK_TIME_LIMIT = 60 * 16
+#: 15 minute soft timeout limit
+CELERYD_TASK_SOFT_TIME_LIMIT = CELERYD_TASK_TIME_LIMIT - 60
+
 #: App settings
 
 #: First pk in TickerHistory with CB data

@@ -60,6 +60,14 @@ class TickerHistory(LogModel):
     bs_volume = models.DecimalField(max_digits=18, decimal_places=8, null=True)
     
     mtgox_timestamp = models.CharField(max_length=100)
+    
+    
+class IntervalHistory(LogModel):
+    #: Which ticker history.  Can be NULL, due to fact most recent ticker may not be recent enough, due to stuck worker
+    ticker = models.OneToOneField(TickerHistory, null=True)
+    #: HOURLY, DAILY, or WEEKLY
+    interval = models.CharField(max_length=32, db_index=True)
+    
 
 
 class OrderRecord(TimeStampModel):
