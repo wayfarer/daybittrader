@@ -30,7 +30,8 @@ def trader(ticker_id):
     auto_trade(current_ticker, buy_mode='hold', sell_mode='hold')
 
 
-@periodic_task(queue='ticker', run_every=timedelta(seconds=600), name='dbtrade.apps.trader.tasks.ticker_save')
+@periodic_task(queue='ticker', run_every=crontab(minute='9,19,29,39,49,59'),
+               name='dbtrade.apps.trader.tasks.ticker_save')
 def ticker_save(*args, **kwargs):
     try:
         _ticker_save(*args, **kwargs)
@@ -89,7 +90,9 @@ def _ticker_save(*args, **kwargs):
 
 def _interval_history(interval_type):
     most_recent_ticker = TickerHistory.objects.all().order_by('id').reverse()[:1][0]
-    if datetime.utcnow() - most_recent_ticker.date_added > timedelta(minutes=20):
+    utc_now = datetime.utcnow()
+    utc_now = pytz.UTC.localize(utc_now)
+    if utc_now - most_recent_ticker.date_added > timedelta(minutes=20):
         #: If most recent ticker is older than 20 minutes, something is wrong, and this NULL will tell us
         most_recent_ticker = None
     interval = IntervalHistory(ticker=most_recent_ticker, interval=interval_type)
@@ -184,9 +187,10 @@ def email_notice(mtgox_price, coinbase_price, bitstamp_price):
                                market=market.upper()).save()
                 
 
-@periodic_task(queue='live_connect', run_every=timedelta(seconds=600), ignore_results=True,
+@periodic_task(queue='live_connect', run_every=crontab(minute='8,18,28,38,48,58'), ignore_results=True,
                name='dbtrade.apps.trader.tasks.live_bs_connect')
 def live_bs_connect():
+    #: TODO: explore possiblity of making this task queue itself up by not using the beat, so task depth doesn't ballon
     #: get latest cb_buy_value, cb_sell_value, bs_last, calculate baselines
     ticker = TickerHistory.objects.all().order_by('id').reverse()[:1][0]
     buy_baseline = ticker.cb_buy_value / ticker.bs_last

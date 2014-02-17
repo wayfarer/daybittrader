@@ -13,7 +13,7 @@ from django.contrib.auth.views import login as auth_login, logout as auth_logout
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 
-from dbtrade.apps.trader.models import TickerHistory, EmailNotice
+from dbtrade.apps.trader.models import TickerHistory, EmailNotice, IntervalHistory
 
 
 def logout(request):
@@ -55,23 +55,34 @@ def _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fe
     fee_schedule_multiplier = (Decimal('100') - Decimal(str(fee_schedule))) / Decimal('100')
     
     days_limit = 15
+    date_limit = datetime.utcnow() - timedelta(days=days_limit)
+    date_limit = str(date_limit).split(' ')[0]#dirty floor :p
     
-    ticker_queryset = TickerHistory.objects.filter(id__gte=settings.CB_STARTING_ID).exclude(cb_buy_value=None)
-    ticker_queryset = ticker_queryset.order_by('date_added').reverse()
+    #===========================================================================
+    # ticker_queryset = TickerHistory.objects.filter(id__gte=settings.CB_STARTING_ID).exclude(cb_buy_value=None)
+    # ticker_queryset = ticker_queryset.order_by('date_added').reverse()
+    #===========================================================================
+    
+    interval_queryset = IntervalHistory.objects.filter(date_added__gte=date_limit, interval='DAILY'
+                                                       ).exclude(ticker=None
+                                                       ).order_by('date_added').reverse()
+    interval_queryset = interval_queryset.select_related()
     
     ticker_data = []
     last_date = None
     total_dates = 0
-    for ticker in ticker_queryset:
-        current_date = str(ticker.date_added).split(' ')[0]
+    for interval in interval_queryset:
+        #: Deprecated:
+        current_date = str(interval.date_added).split(' ')[0]
         if current_date == last_date:
             continue
+        #: End deprecated
         total_dates += 1
         last_date = current_date
-        sell_price = Decimal(str(((ticker.sell_value * increment) - foreign_wire_fee - domestic_wire_fee)))
+        sell_price = Decimal(str(((interval.ticker.sell_value * increment) - foreign_wire_fee - domestic_wire_fee)))
         sell_price *= fee_schedule_multiplier
         
-        days_ago_limit = bus_days_ago(ticker.date_added, business_days_delay)
+        days_ago_limit = bus_days_ago(interval.ticker.date_added, business_days_delay)
         ticker_business_days_ago = TickerHistory.objects.filter(
                                     date_added__gte=days_ago_limit).order_by('date_added')[:1]
         profit = 0
@@ -86,8 +97,8 @@ def _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fe
                 profit = sell_price - buy_price
             #: Don't set profit if there's no buy data available.  Historical from test site data.
         data = {
-                'id': ticker.id,
-                'date': ticker.date_added,
+                'id': interval.ticker.id,
+                'date': interval.ticker.date_added,
                 'sell_price': sell_price,
                 'buy_price': buy_price,
                 'profit': profit
@@ -108,34 +119,42 @@ def _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fe
     today = datetime.today()
     #today_baseline = datetime(today.year, today.month, today.day)
     last_day_baseline = today - timedelta(days=1)
-    daily_ticker_queryset = TickerHistory.objects.filter(id__gte=settings.CB_STARTING_ID,
-                                                         date_added__gte=last_day_baseline).exclude(cb_buy_value=None)
-    #: We go through results in reverse order so that the first record for each day is most recent data:
-    daily_ticker_queryset = daily_ticker_queryset.order_by('date_added').reverse()
+    #===========================================================================
+    # daily_ticker_queryset = TickerHistory.objects.filter(id__gte=settings.CB_STARTING_ID,
+    #                                                      date_added__gte=last_day_baseline).exclude(cb_buy_value=None)
+    # #: We go through results in reverse order so that the first record for each day is most recent data:
+    # daily_ticker_queryset = daily_ticker_queryset.order_by('date_added').reverse()
+    #===========================================================================
+    
+    interval_queryset = IntervalHistory.objects.filter(date_added__gte=last_day_baseline, interval='HOURLY'
+                                                       ).exclude(ticker=None
+                                                       ).order_by('date_added').reverse()
+                                                      
+    interval_queryset = interval_queryset.select_related('ticker')
     
     daily_ticker_data = []
     cb_bs_ticker_data = []
 
-    for ticker in daily_ticker_queryset:
-        sell_price = Decimal(str(((ticker.sell_value * increment) - foreign_wire_fee - domestic_wire_fee)))
+    for interval in interval_queryset:
+        sell_price = Decimal(str(((interval.ticker.sell_value * increment) - foreign_wire_fee - domestic_wire_fee)))
         sell_price *= fee_schedule_multiplier
         if increment == 50:
-            cb_buy_price = ticker.cb_buy_value_50
+            cb_buy_price = interval.ticker.cb_buy_value_50
         else:
-            cb_buy_price = ticker.cb_buy_value * increment
+            cb_buy_price = interval.ticker.cb_buy_value * increment
         data = {
-                'id': ticker.id,
-                'date': ticker.date_added,
+                'id': interval.ticker.id,
+                'date': interval.ticker.date_added,
                 'sell_price': sell_price,
                 'buy_price': cb_buy_price,
                 'profit': sell_price - cb_buy_price
                 }
         daily_ticker_data.append(data)
         cb_bs_data = {
-                      'date': ticker.date_added,
+                      'date': interval.ticker.date_added,
                       'cb_buy_price': cb_buy_price,
-                      'bs_ask_price': ticker.bs_ask * increment,
-                      'bs_bid_price': ticker.bs_bid * increment
+                      'bs_ask_price': interval.ticker.bs_ask * increment,
+                      'bs_bid_price': interval.ticker.bs_bid * increment
                       }
         cb_bs_ticker_data.append(cb_bs_data)
         
