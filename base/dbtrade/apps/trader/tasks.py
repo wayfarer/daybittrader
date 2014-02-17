@@ -2,6 +2,7 @@ from datetime import timedelta, datetime
 import time
 from decimal import Decimal
 from pprint import pprint
+import pytz
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -88,7 +89,7 @@ def _ticker_save(*args, **kwargs):
 
 def _interval_history(interval_type):
     most_recent_ticker = TickerHistory.objects.all().order_by('id').reverse()[:1][0]
-    if datetime.now() - most_recent_ticker.date_added > timedelta(minutes=20):
+    if datetime.utcnow() - most_recent_ticker.date_added > timedelta(minutes=20):
         #: If most recent ticker is older than 20 minutes, something is wrong, and this NULL will tell us
         most_recent_ticker = None
     interval = IntervalHistory(ticker=most_recent_ticker, interval=interval_type)
