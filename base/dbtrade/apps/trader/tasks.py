@@ -95,17 +95,20 @@ def _interval_history(interval_type):
     interval.save()
 
         
-@task(queue='interval_history', name='dbtrade.apps.trader.tasks.hourly_interval_history')
+@task(queue='interval_history', run_every=crontab(minute=0),
+      name='dbtrade.apps.trader.tasks.hourly_interval_history')
 def hourly_interval_history():
     _interval_history('HOURLY')
     
     
-@task(queue='interval_history', name='dbtrade.apps.trader.tasks.daily_interval_history')
+@task(queue='interval_history', run_every=crontab(hour=0, minute=0),
+      name='dbtrade.apps.trader.tasks.daily_interval_history')
 def daily_interval_history():
     _interval_history('DAILY')
     
     
-@task(queue='interval_history', name='dbtrade.apps.trader.tasks.daily_interval_history')
+@task(queue='interval_history', run_every=crontab(hour=0, minute=0, day_of_week=1),
+      name='dbtrade.apps.trader.tasks.weekly_interval_history')
 def weekly_interval_history():
     _interval_history('WEEKLY')
         

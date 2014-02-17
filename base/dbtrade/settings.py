@@ -1,4 +1,5 @@
 import os
+from celery.schedules import crontab
 
 #: System settings
 
@@ -202,6 +203,14 @@ CELERYD_PREFETCH_MULTIPLIER = 1
 CELERYD_TASK_TIME_LIMIT = 60 * 16
 #: 15 minute soft timeout limit
 CELERYD_TASK_SOFT_TIME_LIMIT = CELERYD_TASK_TIME_LIMIT - 60
+
+
+CELERYBEAT_SCHEDULE = {
+    'check_bucket_every_day_at_3pm': {
+        'task': 'csite.apps.butler.tasks.check_bucket',
+        'schedule': crontab(minute='0', hour='15'),
+    },
+}
 
 #: App settings
 
