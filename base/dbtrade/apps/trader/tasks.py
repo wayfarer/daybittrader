@@ -95,23 +95,23 @@ def _interval_history(interval_type):
     interval.save()
 
         
-@task(queue='interval_history', run_every=crontab(minute=0),
-      name='dbtrade.apps.trader.tasks.hourly_interval_history')
+@periodic_task(queue='interval_history', run_every=crontab(minute=0),
+               name='dbtrade.apps.trader.tasks.hourly_interval_history')
 def hourly_interval_history():
     _interval_history('HOURLY')
     
     
-@task(queue='interval_history', run_every=crontab(hour=0, minute=0),
-      name='dbtrade.apps.trader.tasks.daily_interval_history')
+@periodic_task(queue='interval_history', run_every=crontab(hour=0, minute=0),
+               name='dbtrade.apps.trader.tasks.daily_interval_history')
 def daily_interval_history():
     _interval_history('DAILY')
     
     
-@task(queue='interval_history', run_every=crontab(hour=0, minute=0, day_of_week=1),
-      name='dbtrade.apps.trader.tasks.weekly_interval_history')
+@periodic_task(queue='interval_history', run_every=crontab(hour=0, minute=0, day_of_week=1),
+               name='dbtrade.apps.trader.tasks.weekly_interval_history')
 def weekly_interval_history():
     _interval_history('WEEKLY')
-        
+    
         
 @task(queue='notices', ignore_results=True, name='dbtrade.apps.trader.tasks.email_notice')
 def email_notice(mtgox_price, coinbase_price, bitstamp_price):
