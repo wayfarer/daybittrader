@@ -145,14 +145,14 @@ def _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fe
             cb_buy_price = interval.ticker.cb_buy_value * increment
         data = {
                 'id': interval.ticker.id,
-                'date': interval.ticker.date_added,
+                'date': interval.date_added,
                 'sell_price': sell_price,
                 'buy_price': cb_buy_price,
                 'profit': sell_price - cb_buy_price
                 }
         daily_ticker_data.append(data)
         cb_bs_data = {
-                      'date': interval.ticker.date_added,
+                      'date': interval.date_added,
                       'cb_buy_price': cb_buy_price,
                       'bs_ask_price': interval.ticker.bs_ask * increment,
                       'bs_bid_price': interval.ticker.bs_bid * increment
