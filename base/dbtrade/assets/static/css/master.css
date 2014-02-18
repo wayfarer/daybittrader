@@ -28,6 +28,11 @@ a.navbar-brand {
 	position: absolute;
 	top: 1px
 	left: 25px;
+	opacity: .7;
+}
+
+a.navbar-brand:hover #sun {
+	opacity: 1;
 }
 
 #B {
