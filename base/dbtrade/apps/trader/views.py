@@ -82,12 +82,13 @@ def _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fe
         sell_price = Decimal(str(((interval.ticker.sell_value * increment) - foreign_wire_fee - domestic_wire_fee)))
         sell_price *= fee_schedule_multiplier
         
-        days_ago_limit = bus_days_ago(interval.ticker.date_added, business_days_delay)
-        ticker_business_days_ago = TickerHistory.objects.filter(
+        days_ago_limit = bus_days_ago(interval.date_added, business_days_delay)
+        ticker_business_days_ago = IntervalHistory.objects.filter(
                                     date_added__gte=days_ago_limit).order_by('date_added')[:1]
         profit = 0
         buy_price = 0
-        for old_ticker in ticker_business_days_ago:
+        for interval in ticker_business_days_ago:
+            old_ticker = interval.ticker
             #: Loops max of once
             if increment == 50 and old_ticker.cb_buy_value_50:
                 buy_price = old_ticker.cb_buy_value_50
@@ -98,7 +99,7 @@ def _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fe
             #: Don't set profit if there's no buy data available.  Historical from test site data.
         data = {
                 'id': interval.ticker.id,
-                'date': interval.ticker.date_added,
+                'date': interval.date_added,
                 'sell_price': sell_price,
                 'buy_price': buy_price,
                 'profit': profit

@@ -24,10 +24,9 @@ a.navbar-brand {
 }
 
 #sun {
-	display: none;
 	position: absolute;
-	top: 1px;
-	left: 25px;
+	top: 2px;
+	left: 31px;
 	opacity: .7;
 }
 

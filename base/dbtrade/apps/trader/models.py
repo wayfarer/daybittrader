@@ -62,11 +62,15 @@ class TickerHistory(LogModel):
     mtgox_timestamp = models.CharField(max_length=100)
     
     
-class IntervalHistory(LogModel):
+class IntervalHistory(models.Model):
     #: Which ticker history.  Can be NULL, due to fact most recent ticker may not be recent enough, due to stuck worker
     ticker = models.OneToOneField(TickerHistory, null=True)
+    
     #: HOURLY, DAILY, or WEEKLY
     interval = models.CharField(max_length=32, db_index=True)
+    
+    #: Date added is indexed for quick lookups
+    date_added = models.DateTimeField(auto_now_add=True, db_index=True)
     
 
 
