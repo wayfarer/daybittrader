@@ -56,6 +56,17 @@ def trade(request, trade_type):
     if CB_API == None:
         return HttpResponseRedirect('/trade/login/?ref=/trade/%s/' % trade_type.lower())
     
+    remove_uuid = request.GET.get('remove', '')
+    if remove_uuid:
+        try:
+            trade = TradeOrder.objects.get(uuid=remove_uuid)
+        except TradeOrder.DoesNotExist:
+            print 'Invalid UUID selected for removal.'
+        else:
+            trade.active = False
+            trade.save()
+        return HttpResponseRedirect('/trade/%s/' % trade_type.lower())
+    
     trade = None
     if request.method == 'POST':
         form = TradeForm(request.POST)
@@ -90,6 +101,8 @@ def trade(request, trade_type):
     for trade in current_trades:
         trade_data = {
                       'type': trade.type,
+                      'uuid': trade.uuid,
+                      'parent_trade': trade.parent_trade,
                       'price_point': '%.2f' % trade.price_point,
                       'btc_amount': float(trade.btc_amount),#:converting to float strips zeros from right side
                       'cost': '%.2f' % (trade.btc_amount * trade.price_point),
