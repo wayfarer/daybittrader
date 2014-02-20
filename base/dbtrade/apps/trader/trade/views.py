@@ -121,7 +121,7 @@ def trade(request, trade_type):
            'form': form,
            'trade': trade,
            'trade_type': trade_type,
-           'trade_type_lower': trade_type.lower().replace('_' ' '),
+           'trade_type_lower': trade_type.lower().replace('_', ' '),
            'cb_balance': CB_API.balance,
            'current_price': '%.2f' % current_price_dict[trade_type],
            'bitstamp_price': '%.2f' % current_ticker.bs_last,
