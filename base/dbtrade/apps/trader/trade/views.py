@@ -17,7 +17,9 @@ from dbtrade.apps.trader.models import TradeOrder, TickerHistory
 def home(request):
     template = 'trade_home.html'
     
-    env = {}
+    ticker = TickerHistory.objects.exclude(bs_last=None).order_by('id').reverse()[:1][0]
+    
+    env = {'bitstamp_price': ticker.bs_last}
     return render_to_response(template, RequestContext(request, env))
 
 
@@ -65,7 +67,7 @@ def trade(request, trade_type):
         else:
             trade.active = False
             trade.save()
-        return HttpResponseRedirect('/trade/%s/' % trade_type.lower())
+        return HttpResponseRedirect('/trade/%s/' % trade_type.lower().replace('_', ''))
     
     trade = None
     if request.method == 'POST':
@@ -80,20 +82,23 @@ def trade(request, trade_type):
             form.instance.type = trade_type
             form.instance.user = request.user
             trade = form.save()
-            return HttpResponseRedirect('/trade/%s/' % trade_type.lower())
+            return HttpResponseRedirect('/trade/%s/' % trade_type.lower().replace('_', ''))
     
     submit_text_dict = {
                         'BUY': 'Create Purchase Order',
-                        'SELL': 'Create Sell Order'
+                        'SELL': 'Create Sell Order',
+                        'STOP_LOSS': 'Create Stop Loss'
                         }
     heading_text_dict = {
                          'BUY': 'Buy Bitcoins',
-                         'SELL': 'Sell Bitcoins'
+                         'SELL': 'Sell Bitcoins',
+                         'STOP_LOSS': 'Stop Loss'
                          }
     current_ticker = TickerHistory.objects.all().order_by('id').reverse()[:1][0]
     current_price_dict = {
                           'BUY': current_ticker.cb_buy_value,
-                          'SELL': current_ticker.cb_sell_value
+                          'SELL': current_ticker.cb_sell_value,
+                          'STOP_LOSS': current_ticker.cb_sell_value
                           }
     
     current_trades = TradeOrder.objects.filter(user=request.user, active=True)
@@ -116,7 +121,7 @@ def trade(request, trade_type):
            'form': form,
            'trade': trade,
            'trade_type': trade_type,
-           'trade_type_lower': trade_type.lower(),
+           'trade_type_lower': trade_type.lower().replace('_' ' '),
            'cb_balance': CB_API.balance,
            'current_price': '%.2f' % current_price_dict[trade_type],
            'bitstamp_price': '%.2f' % current_ticker.bs_last,
@@ -133,4 +138,9 @@ def buy(request):
 @login_required(login_url='/#login-form')
 def sell(request):
     return trade(request, 'SELL')
+
+
+@login_required(login_url='/#login-form')
+def stoploss(request):
+    return trade(request, 'STOP_LOSS')
 

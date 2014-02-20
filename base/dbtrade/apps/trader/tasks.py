@@ -275,6 +275,7 @@ def trade(trade_id):
         trade_order.save()
         TradeOrderLog(trade_order=trade_order, type=trade_order.type, btc_amount=trade_order.btc_amount,
                       status='FAIL', message=error_message).save()
+        #: TODO: should probably send email to user explaining that credentials are not valid.
         return
     
     if trade_order.type == 'SELL' or trade_order.type == 'STOP_LOSS':

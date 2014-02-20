@@ -5,4 +5,5 @@ urlpatterns = patterns('',
     url(r'^login/$', 'dbtrade.apps.trader.trade.views.login', name='trade_login'),
     url(r'^buy/$', 'dbtrade.apps.trader.trade.views.buy', name='trade_buy'),
     url(r'^sell/$', 'dbtrade.apps.trader.trade.views.sell', name='trade_sell'),
+    url(r'^stoploss/$', 'dbtrade.apps.trader.trade.views.stoploss', name='trade_stoploss'),
 )

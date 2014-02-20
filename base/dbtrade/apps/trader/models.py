@@ -174,10 +174,10 @@ class TradeOrder(TimeStampModel):
     #: Unique identifier for convenience of user
     uuid = models.CharField(max_length=36, db_index=True, null=True)
     
-    #: Type of trade, BUY or SELL
+    #: Type of trade, BUY, SELL or STOP_LOSS
     type = models.CharField(max_length=32, choices=TRADE_TYPE_CHOICES, db_index=True)
     
-    #: When to trade.  Low for BUY, high for SELL
+    #: When to trade.  Low for BUY or STOP_LOSS, high for SELL
     price_point = models.DecimalField(max_digits=12, decimal_places=5, db_index=True,
                                       verbose_name='Trading Price',
                                       help_text='Your trade will be executed at this price point.')
@@ -189,7 +189,8 @@ class TradeOrder(TimeStampModel):
     active = models.BooleanField(default=True, db_index=True)
     
     #: Used as a filter in special cases.  Sometimes we need to lock a job to make sure only one worker operates on
-    #: it at a time in a distributed queue environment.
+    #: it at a time in a distributed queue environment.  Worker that sends trade request needs to know not to resend,
+    #: if that trade hasn't been completed yet.
     locked = models.BooleanField(default=False, db_index=False)
     
     #: SUCCESS or FAIL
