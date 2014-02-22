@@ -13,6 +13,10 @@ from dbtrade.utils.utils import get_user_cb_api
 from dbtrade.apps.trader.models import TradeOrder, TickerHistory
 
 
+def get_recent_trades(user):
+    return TradeOrder.objects.filter(completion_status='SUCCESS', user=user).order_by('id').reverse()[:10]
+
+
 @login_required(login_url='/#login-form')
 def home(request):
     template = 'trade_home.html'
@@ -125,7 +129,8 @@ def trade(request, trade_type):
            'cb_balance': CB_API.balance,
            'current_price': '%.2f' % current_price_dict[trade_type],
            'bitstamp_price': '%.2f' % current_ticker.bs_last,
-           'trades': trades_data
+           'trades': trades_data,
+           'recent_trades': get_recent_trades(request.user)
            }
     return render_to_response(template, RequestContext(request, env))
 

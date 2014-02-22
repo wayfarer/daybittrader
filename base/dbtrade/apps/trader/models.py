@@ -199,6 +199,16 @@ class TradeOrder(TimeStampModel):
     #: When trade order expires.  We require this to be set, for now.
     date_expire = models.DateTimeField(db_index=True)
     
+    @property
+    def most_recent_log(self):
+        log_queryset = TradeOrderLog.objects.filter(trade_order=self).order_by('id').reverse()[:1]
+        try:
+            log = log_queryset[0]
+        except IndexError:
+            return None
+        else:
+            return log
+    
     def save(self, *args, **kwargs):
         if not self.uuid:
             self.uuid = uuid.uuid4()
