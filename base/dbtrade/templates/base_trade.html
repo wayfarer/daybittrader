@@ -16,26 +16,28 @@
 		</ul>
 	</div>
 	<div class="aside">
-		<div class="trade-room-promo">
-			Coming soon, the Trade Room
-		</div>
-	</div>
-	<div class="aside">
 	{% block aside %}{% endblock aside %}
 	</div>
 	<script>$('.nav-pills li a').each(function() {if(this.href == window.location.href) {$(this).parent().addClass('active');}});</script>
+	
+	{% block sidebar %}{% endblock sidebar %}
+	<div class="aside">
+		<div class="trade-room-promo">
+			Coming soon,<br>
+			the Trade Room
+		</div>
+	</div>
 	{% if recent_trades %}
 	<div class="aside">
 		<h4>Recent Trades</h4>
-		<ul class="recent-trades">
+		<ul class="recent-trades trade-list">
 			{% for trade in recent_trades %}
-			<li class="trade-{{ trade.type }} trade-{{ trade.completion_status }}">{{ trade.type }} {{ trade.btc_amount }} BTC at
-				${{ trade.most_recent_log.price_point }}</li>
+			<li class="trade-{{ trade.type }} trade-{{ trade.completion_status }}"><strong>{{ trade.type }}</strong>
+				{{ trade.btc_amount }} BTC at ${{ trade.most_recent_log.price_point }}</li>
 			{% endfor %}
 		</ul>
 	</div>
 	{% endif %}
-	{% block sidebar %}{% endblock sidebar %}
 </div>
 <div class="col-md-7">
 	{% block content %}{% endblock content %}

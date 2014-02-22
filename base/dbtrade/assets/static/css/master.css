@@ -131,4 +131,6 @@ a.navbar-brand:hover #sun {
 	font-weight: bold;
 	color: #fff;
 	background: #428bca;
+	margin: 10px;
+	border-radius: 10px;
 }
