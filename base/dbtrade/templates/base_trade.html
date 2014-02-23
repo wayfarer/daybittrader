@@ -15,6 +15,13 @@
 			<li><a href="/trade/">Live Data</a></li>
 		</ul>
 	</div>
+</div>
+<div class="col-md-7">
+	{% if heading %}
+	<h1>{{ heading }}</h1>
+	{% endif %}
+</div>
+<div class="col-md-5">
 	<div class="aside">
 	{% block aside %}{% endblock aside %}
 	</div>

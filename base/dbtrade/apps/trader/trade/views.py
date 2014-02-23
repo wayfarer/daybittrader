@@ -23,7 +23,10 @@ def home(request):
     
     ticker = TickerHistory.objects.exclude(bs_last=None).order_by('id').reverse()[:1][0]
     
-    env = {'bitstamp_price': ticker.bs_last}
+    env = {
+           'bitstamp_price': ticker.bs_last,
+           'heading': 'Latest Bitstamp Trades'
+           }
     return render_to_response(template, RequestContext(request, env))
 
 
