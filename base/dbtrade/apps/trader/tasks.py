@@ -119,7 +119,7 @@ def _ticker_save(*args, **kwargs):
                                        mtgox_timestamp=mtgox_timestamp,
                                        )
         ticker_history.save()
-        trader.delay(ticker_history.id)
+        #trader.delay(ticker_history.id)
         do_trades.delay(str(ticker_history.cb_buy_value), str(ticker_history.cb_sell_value))
         email_notice.delay(str(ticker_history.buy_value), str(ticker_history.cb_buy_value), str(ticker_history.bs_ask))
     else:
