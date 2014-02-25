@@ -164,9 +164,18 @@ def email_notice(mtgox_price, coinbase_price, bitstamp_price):
     print 'coinbase_price=%s' % coinbase_price
     print 'bitstamp_price=%s' % bitstamp_price
     
-    mtgox_price = Decimal(mtgox_price)
-    coinbase_price = Decimal(coinbase_price)
-    bitstamp_price = Decimal(bitstamp_price)
+    try:
+        mtgox_price = Decimal(mtgox_price)
+    except:
+        mtgox_price = None
+    try:
+        coinbase_price = Decimal(coinbase_price)
+    except:
+        coinbase_price = None
+    try:
+        bitstamp_price = Decimal(bitstamp_price)
+    except:
+        bitstamp_price = None
     
     timedeltas = {
                   'HOURLY': timedelta(hours=1),
