@@ -46,7 +46,7 @@ def _ticker_save(*args, **kwargs):
         res = API.get_ticker()
     except:
         res = None
-    if res['result'] == 'success' or res == None:
+    if  res == None or res['result'] == 'success':
         if res == None:
             ticker_data = None
             volume = None
