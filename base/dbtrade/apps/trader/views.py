@@ -79,7 +79,10 @@ def _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fe
         #: End deprecated
         total_dates += 1
         last_date = current_date
-        sell_price = Decimal(str(((interval.ticker.sell_value * increment) - foreign_wire_fee - domestic_wire_fee)))
+        try:
+            sell_price = Decimal(str(((interval.ticker.sell_value * increment) - foreign_wire_fee - domestic_wire_fee)))
+        except TypeError:
+            sell_price = Decimal('0')
         sell_price *= fee_schedule_multiplier
         
         days_ago_limit = bus_days_ago(interval.date_added, business_days_delay)
@@ -137,7 +140,10 @@ def _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fe
     cb_bs_ticker_data = []
 
     for interval in interval_queryset:
-        sell_price = Decimal(str(((interval.ticker.sell_value * increment) - foreign_wire_fee - domestic_wire_fee)))
+        try:
+            sell_price = Decimal(str(((interval.ticker.sell_value * increment) - foreign_wire_fee - domestic_wire_fee)))
+        except TypeError:#: NULL
+            sell_price = Decimal('0')
         sell_price *= fee_schedule_multiplier
         if increment == 50:
             cb_buy_price = interval.ticker.cb_buy_value_50
