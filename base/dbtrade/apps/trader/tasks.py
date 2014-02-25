@@ -42,9 +42,47 @@ def ticker_save(*args, **kwargs):
 
 def _ticker_save(*args, **kwargs):
     #: TODO: more intelligent handling of various errors with various APIs
-    res = API.get_ticker()
-    if res['result'] == 'success':
-        ticker_data = res['data']
+    try:
+        res = API.get_ticker()
+    except:
+        res = None
+    if res['result'] == 'success' or res == None:
+        if res == None:
+            ticker_data = None
+            volume = None
+            weighted_average_value = None
+            weighted_average_value_int = None
+            average_value = None
+            average_value_int = None
+            last_value = None
+            last_value_int = None
+            high_value = None
+            high_value_int = None
+            low_value = None
+            low_value_int = None
+            sell_value = None
+            sell_value_int = None
+            buy_value = None
+            buy_value_int = None
+            mtgox_timestamp = None
+        else:
+            ticker_data = res['data']
+            volume = Decimal(ticker_data['vol']['value'])
+            weighted_average_value = Decimal(ticker_data['vwap']['value'])
+            weighted_average_value_int = int(ticker_data['vwap']['value_int'])
+            average_value = Decimal(ticker_data['avg']['value'])
+            average_value_int = int(ticker_data['avg']['value_int'])
+            last_value = Decimal(ticker_data['last']['value'])
+            last_value_int = int(ticker_data['last']['value_int'])
+            high_value = Decimal(ticker_data['high']['value'])
+            high_value_int = int(ticker_data['high']['value_int'])
+            low_value = Decimal(ticker_data['low']['value'])
+            low_value_int = int(ticker_data['low']['value_int'])
+            sell_value = Decimal(ticker_data['sell']['value'])
+            sell_value_int = int(ticker_data['sell']['value_int'])
+            buy_value = Decimal(ticker_data['buy']['value'])
+            buy_value_int = int(ticker_data['buy']['value_int'])
+            mtgox_timestamp = ticker_data['now']
         cb_buy_value = CB_API.buy_price(1)
         cb_buy_value_50 = CB_API.buy_price(50)
         cb_sell_value = CB_API.sell_price(1)
@@ -53,21 +91,21 @@ def _ticker_save(*args, **kwargs):
         print 'bs_ticker= %s' % str(bs_ticker)
         print 'Saving ticker data!'
         #print ticker_data
-        ticker_history = TickerHistory(volume=Decimal(ticker_data['vol']['value']),
-                                       weighted_average_value=Decimal(ticker_data['vwap']['value']),
-                                       weighted_average_value_int=int(ticker_data['vwap']['value_int']),
-                                       average_value=Decimal(ticker_data['avg']['value']),
-                                       average_value_int=int(ticker_data['avg']['value_int']),
-                                       last_value=Decimal(ticker_data['last']['value']),
-                                       last_value_int=int(ticker_data['last']['value_int']),
-                                       high_value=Decimal(ticker_data['high']['value']),
-                                       high_value_int=int(ticker_data['high']['value_int']),
-                                       low_value=Decimal(ticker_data['low']['value']),
-                                       low_value_int=int(ticker_data['low']['value_int']),
-                                       sell_value=Decimal(ticker_data['sell']['value']),
-                                       sell_value_int=int(ticker_data['sell']['value_int']),
-                                       buy_value=Decimal(ticker_data['buy']['value']),
-                                       buy_value_int=int(ticker_data['buy']['value_int']),
+        ticker_history = TickerHistory(volume=volume,
+                                       weighted_average_value=weighted_average_value,
+                                       weighted_average_value_int=weighted_average_value_int,
+                                       average_value=average_value,
+                                       average_value_int=average_value_int,
+                                       last_value=last_value,
+                                       last_value_int=last_value_int,
+                                       high_value=high_value,
+                                       high_value_int=high_value_int,
+                                       low_value=low_value,
+                                       low_value_int=low_value_int,
+                                       sell_value=sell_value,
+                                       sell_value_int=sell_value_int,
+                                       buy_value=buy_value,
+                                       buy_value_int=buy_value_int,
                                        cb_buy_value=cb_buy_value,
                                        cb_buy_value_50=cb_buy_value_50,
                                        cb_sell_value=cb_sell_value,
@@ -78,7 +116,7 @@ def _ticker_save(*args, **kwargs):
                                        bs_last = bs_ticker['last'],
                                        bs_low = bs_ticker['low'],
                                        bs_volume = bs_ticker['volume'],
-                                       mtgox_timestamp=ticker_data['now'],
+                                       mtgox_timestamp=mtgox_timestamp,
                                        )
         ticker_history.save()
         trader.delay(ticker_history.id)
@@ -140,6 +178,9 @@ def email_notice(mtgox_price, coinbase_price, bitstamp_price):
         for point in ['high', 'low']:
             now = datetime.now()
             price = locals()['%s_price' % market]
+            if price == None:
+                print 'Not sending notification for null value!'
+                continue
             if point == 'high':
                 point_extra = 'lte'
             else:
