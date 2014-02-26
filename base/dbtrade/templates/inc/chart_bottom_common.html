@@ -1,6 +1,6 @@
 <script>
 	$(document).ready(function() {
-		var data_arr = [['Date', 'Buy Cost, Coinbase ({{ increment }})', 'Sell Price, MtGox ({{ increment }})', '{{ profit_name }}']];
+		{% comment %}/*var data_arr = [['Date', 'Buy Cost, Coinbase ({{ increment }})', 'Sell Price, MtGox ({{ increment }})', '{{ profit_name }}']];
 		{% for data in ticker_data.data %}data_arr.push(['{{ data.date|date:"m-d" }}',
 		{{ data.buy_price }}, {{ data.sell_price }}, {{ data.profit }}]);{% endfor %}
 		var data = google.visualization.arrayToDataTable(data_arr);
@@ -24,7 +24,7 @@
         };
 
         var chart2 = new google.visualization.LineChart(document.getElementById('daily-chart'));
-        chart2.draw(data, options);
+        chart2.draw(data, options);*/{% endcomment %}
         
         var data_arr = [['Date', 'Buy Price, Coinbase ({{ increment }})', 'Ask Price, Bitstamp ({{ increment }})']];
 		{% for data in cb_bs_ticker_data.data %}data_arr.push(['{{ data.date|date:"H:i" }}',
@@ -32,11 +32,24 @@
 		var data = google.visualization.arrayToDataTable(data_arr);
         
         var options = {
-        	title: 'Coinbase - Bitstamp Comparison (Last 24 hours)',
+        	title: 'Coinbase - Bitstamp Buy - Ask Comparison (Last 24 hours)',
         	hAxis: {title: 'Time', titleTextStyle: {color: 'red'}}
         };
 
         var chart3 = new google.visualization.LineChart(document.getElementById('a-c-chart'));
         chart3.draw(data, options);
+        
+        var data_arr = [['Date', 'Sell Price, Coinbase ({{ increment }})', 'Bid Price, Bitstamp ({{ increment }})']];
+		{% for data in cb_bs_ticker_data.data %}data_arr.push(['{{ data.date|date:"H:i" }}',
+		{{ data.cb_sell_price }}, {{ data.bs_bid_price }}]);{% endfor %}
+		var data = google.visualization.arrayToDataTable(data_arr);
+        
+        var options = {
+        	title: 'Coinbase - Bitstamp Sell - Bid Comparison (Last 24 hours)',
+        	hAxis: {title: 'Time', titleTextStyle: {color: 'red'}}
+        };
+
+        var chart4 = new google.visualization.LineChart(document.getElementById('a-c-chart'));
+        chart4.draw(data, options);
 	});
 </script>

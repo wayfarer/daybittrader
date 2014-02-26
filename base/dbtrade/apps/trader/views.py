@@ -147,8 +147,10 @@ def _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fe
         sell_price *= fee_schedule_multiplier
         if increment == 50:
             cb_buy_price = interval.ticker.cb_buy_value_50
+            cb_sell_price = interval.ticker.cb_sell_value_50
         else:
             cb_buy_price = interval.ticker.cb_buy_value * increment
+            cb_sell_price = interval.ticker.cb_sell_value * increment
         data = {
                 'id': interval.ticker.id,
                 'date': interval.date_added,
@@ -160,6 +162,7 @@ def _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fe
         cb_bs_data = {
                       'date': interval.date_added,
                       'cb_buy_price': cb_buy_price,
+                      'cb_sell_price': cb_sell_price,
                       'bs_ask_price': interval.ticker.bs_ask * increment,
                       'bs_bid_price': interval.ticker.bs_bid * increment
                       }
