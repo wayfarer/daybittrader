@@ -38,7 +38,7 @@ def login(request):
         return HttpResponseRedirect('/trade/')
     
     ref = request.GET.get('ref', '/trade/')
-    env = {'ref': ref}
+    env = {'ref': ref, 'heading': 'Log in with Coinbase'}
     return render_to_response(template, RequestContext(request, env))
 
 
