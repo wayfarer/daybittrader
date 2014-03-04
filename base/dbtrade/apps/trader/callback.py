@@ -15,6 +15,7 @@ import httplib2
 
 from dbtrade.apps.trader.models import TickerHistory
 from dbtrade.utils.apiclient import CoinBaseAPI, coinbase_oauth_client
+#from dbtrade.utils.utils import get_user_cb_api
 
 
 @csrf_exempt
@@ -29,14 +30,14 @@ def access_fee(request):
     #return render_to_response('about.html', RequestContext(request, env))
 
 
-@login_required(login_url='/#login-form')
+#@login_required(login_url='/#login-form')
 def connect_coinbase(request):
     coinbase_callback_redirect_to = request.GET.get('redirect_to', None)
     request.session['coinbase_callback_redirect_to'] = coinbase_callback_redirect_to
     return HttpResponseRedirect(coinbase_oauth_client.step1_get_authorize_url())
 
 
-@login_required(login_url='/#login-form')
+#@login_required(login_url='/#login-form')
 def connect_coinbase_callback(request):
     oauth_code = request.GET.get('code', None)
     if oauth_code == None:
@@ -45,8 +46,14 @@ def connect_coinbase_callback(request):
     http = httplib2.Http(ca_certs='/etc/ssl/certs/ca-certificates.crt')
     token = coinbase_oauth_client.step2_exchange(oauth_code, http=http)
     
-    request.user.usersettings.coinbase_oauth_token = token.to_json()
-    request.user.usersettings.save()
+    if request.user.is_authenticated():
+        user = request.user
+    else:
+        CB_API = CoinBaseAPI(oauth2_credentials=token.to_json())
+        #: TODO: handle unauthenticated requests, create user or find existing one
+    
+    user.usersettings.coinbase_oauth_token = token.to_json()
+    user.usersettings.save()
     
     coinbase_callback_redirect_to = request.session.get('coinbase_callback_redirect_to', '/')
     if coinbase_callback_redirect_to == None:
