@@ -240,3 +240,4 @@ class TradeOrderLog(LogModel):
 class UserSettings(models.Model):
     user = models.OneToOneField(User)
     coinbase_oauth_token = models.TextField(null=True)
+    coinbase_user_id = models.CharField(max_length=64, null=True, db_index=True, unique=True)
