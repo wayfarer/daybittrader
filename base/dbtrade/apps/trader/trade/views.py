@@ -34,7 +34,13 @@ def home(request):
 def login(request):
     template = 'trade_login.html'
     CB_API = get_user_cb_api(request.user)
-    if CB_API != None:
+    authorized = CB_API != None
+    if authorized:
+        try:
+            cb_balance = CB_API.balance
+        except ValueError:
+            authorized = False
+    if not authorized:
         return HttpResponseRedirect('/trade/')
     
     ref = request.GET.get('ref', '/trade/')
