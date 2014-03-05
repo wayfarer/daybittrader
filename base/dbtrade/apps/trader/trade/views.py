@@ -40,7 +40,7 @@ def login(request):
             cb_balance = CB_API.balance
         except ValueError:
             authorized = False
-    if not authorized:
+    if authorized:
         return HttpResponseRedirect('/trade/')
     
     ref = request.GET.get('ref', '/trade/')
