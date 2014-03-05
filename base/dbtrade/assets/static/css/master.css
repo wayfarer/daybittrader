@@ -54,6 +54,10 @@ a.navbar-brand:hover #sun {
 	padding-top: 15px;
 }
 
+#top-cb-login small a {
+	color: #f90;
+}
+
 #top-cb-login .btn-primary {
 	font-size: 20px;
 }
@@ -84,6 +88,7 @@ a.navbar-brand:hover #sun {
 	font-size: 18px;
 	border-bottom: 3px solid #666;
 	padding-bottom: 4px;
+	padding-top: 15px;
 }
 
 #notifications-signup-step1 a {
