@@ -47,7 +47,7 @@
 					<img id="sun" src="{{ STATIC_URL }}images/sun.png">
 					<span id="day">Day</span><span id="B"><span>B</span><img src="{{ STATIC_URL }}images/dbt-logo.png"></span>itTrader
 				</a>
-				<div class="slugline" style="display:none;">A trading system for Coinbase</div>
+				<div class="slugline">A trading system for Coinbase</div>
 			</div>
 	
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
@@ -85,7 +85,7 @@
 	
 <div class="container" id="wrapper">
 	{% if not request.user.is_authenticated and not hide_top_login %}
-	<div class="row" style="display:none;text-align:center;">
+	<div class="row" style="text-align:center;">
 		<div class="col-md-12" id="top-cb-login">
 			<a href="/connect/coinbase/" class="btn btn-primary"> Log in with Coinbase</a> &nbsp;
 			<small><a href="/login/coinbase/">What is this?</a></small>
