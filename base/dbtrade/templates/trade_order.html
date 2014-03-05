@@ -2,6 +2,7 @@
 {% load bootstrap %}
 
 {% block sidebar %}
+{% if trades %}
 <h4 class="clear">Active Trades</h4>
 <ul class="trade-list">
 {% for trade in trades %}
@@ -12,6 +13,7 @@
 	</li>
 {% endfor %}
 </ul>
+{% endif %}
 {% endblock sidebar %}
 
 {% block content %}
