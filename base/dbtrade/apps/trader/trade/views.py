@@ -62,7 +62,14 @@ class TradeForm(forms.ModelForm):
 def trade(request, trade_type):
     template = 'trade_order.html'
     CB_API = get_user_cb_api(request.user)
-    if CB_API == None:
+    authorized = CB_API != None
+    if authorized:
+        try:
+            cb_balance = CB_API.balance
+        except ValueError:
+            authorized = False
+    
+    if not authorized:
         return HttpResponseRedirect('/trade/login/?ref=/trade/%s/' % trade_type.lower())
     
     remove_uuid = request.GET.get('remove', '')
@@ -129,7 +136,7 @@ def trade(request, trade_type):
            'trade': trade,
            'trade_type': trade_type,
            'trade_type_lower': trade_type.lower().replace('_', ' '),
-           'cb_balance': CB_API.balance,
+           'cb_balance': cb_balance,
            'current_price': '%.2f' % current_price_dict[trade_type],
            'bitstamp_price': '%.2f' % current_ticker.bs_last,
            'trades': trades_data,
