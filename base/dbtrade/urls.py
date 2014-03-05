@@ -10,9 +10,10 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'dbtrade.apps.trader.views.logout', name='logout'),
     url(r'^historical/$', 'dbtrade.apps.trader.views.historical', name='historical'),
     url(r'^about/$', 'dbtrade.apps.trader.views.about', name='about'),
-    url(r'^notification/$', 'dbtrade.apps.trader.views.notification'),
-    url(r'^notification/(?P<uuid>[-\w]+)/$', 'dbtrade.apps.trader.views.notification'),
+    url(r'^notification/$', 'dbtrade.apps.trader.views.notification', name='notification'),
+    url(r'^notification/(?P<uuid>[-\w]+)/$', 'dbtrade.apps.trader.views.notification', name='notification_detail'),
     
+    url(r'^login/coinbase/$', 'dbtrade.apps.trader.views.login_coinbase', name='login_coinbase'),
     url(r'^connect/coinbase/$', 'dbtrade.apps.trader.callback.connect_coinbase'),
     url(r'^connect/coinbase/callback/$', 'dbtrade.apps.trader.callback.connect_coinbase_callback'),
     
