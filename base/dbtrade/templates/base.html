@@ -83,13 +83,13 @@
 </header>
 	
 <div class="container" id="wrapper">
-	{% if not request.user.is_authenticated %}
-	{% comment %}<div class="row" style="display:none;text-align:center;">
+	{% if not request.user.is_authenticated and not hide_top_login %}
+	<div class="row" style="display:none;text-align:center;">
 		<div class="col-md-12" id="top-cb-login">
 			<a href="/connect/coinbase/" class="btn btn-primary"> Log in with Coinbase</a> &nbsp;
-			<small><a href="">What is this?</a></small>
+			<small><a href="/login/coinbase/">What is this?</a></small>
 		</div>
-	</div>{% endcomment %}
+	</div>
 	{% endif %}
 	<div class="row">
 		{% block body %}{% endblock body %}

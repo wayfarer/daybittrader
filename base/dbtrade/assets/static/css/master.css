@@ -50,6 +50,14 @@ a.navbar-brand:hover #sun {
 	margin-left: -25px;
 }
 
+#top-cb-login {
+	padding-top: 15px;
+}
+
+#top-cb-login .btn-primary {
+	font-size: 20px;
+}
+
 #login-form {
 	/*padding-top: 100px;*/
 }

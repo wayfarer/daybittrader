@@ -337,3 +337,8 @@ def notification(request, uuid=None):
            'uuid': uuid
            }
     return render_to_response('notification.html', RequestContext(request, env))
+
+
+def login_coinbase(request):
+    env = {'hide_top_login': True}
+    return render_to_response('login_coinbase.html', RequestContext(request, env))
