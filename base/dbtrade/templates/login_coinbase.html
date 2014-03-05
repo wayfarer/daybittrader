@@ -3,8 +3,8 @@
 
 {% block body %}
 
-<div class="col-md-4"></div>
-<div class="col-md-4">
+<div class="col-md-1"></div>
+<div class="col-md-10">
 	<p>&nbsp</p>
 	<h1>Log in with Coinbase</h1>
 	<p>Logging in with Coinbase is a safer, easy, and instant way of logging into the DayBitTrader application.
@@ -22,8 +22,10 @@
 		important to your security, and it is a permission we definitely don't need anyway.</p>
 	<p>Your access keys to Coinbase are encrypted in the database. In the unlikely case that an attacker both gains access
 		to the database and the decryption key, the key will only be good for making trades, your funds will be safe.</p>
-	<p style="text-align:center;font-size:30px;"><a href="/login/coinbase/" class="btn btn-primary">Log in with Coinbase</a></p>
+	<p style="text-align:center;">
+		<a style="font-size:30px;" href="/login/coinbase/" class="btn btn-primary">Log in with Coinbase</a>
+	</p>
 </div>
-<div class="col-md-4"></div>
+<div class="col-md-1"></div>
 				
 {% endblock body %}
