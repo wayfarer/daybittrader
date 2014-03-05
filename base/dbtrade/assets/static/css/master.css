@@ -50,6 +50,12 @@ a.navbar-brand:hover #sun {
 	margin-left: -25px;
 }
 
+.slugline {
+	float: left;
+	color: #fff;
+	padding-top: 20px;
+}
+
 #top-cb-login {
 	padding-top: 15px;
 }
