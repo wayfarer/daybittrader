@@ -30,15 +30,16 @@ fee_defaults = {
 
 
 
-class FeeSelectorSimple(forms.Form):
-    fee_schedule = forms.DecimalField(initial=fee_defaults['fee_schedule'])
+#class IncrementSelectorSimple(forms.Form):
+#    fee_schedule = forms.DecimalField(initial=fee_defaults['fee_schedule'])
 
 
-class FeeSelector(forms.Form):
-    business_days_delay = forms.IntegerField(initial=fee_defaults['business_days_delay'])
-    foreign_wire_fee = forms.DecimalField(initial=fee_defaults['foreign_wire_fee'])
-    domestic_wire_fee = forms.DecimalField(initial=fee_defaults['domestic_wire_fee'])
-    fee_schedule = forms.DecimalField(initial=fee_defaults['fee_schedule'])
+#: replaces FeeSelector form:
+class IncrementSelector(forms.Form):
+    #business_days_delay = forms.IntegerField(initial=fee_defaults['business_days_delay'])
+    #foreign_wire_fee = forms.DecimalField(initial=fee_defaults['foreign_wire_fee'])
+    #domestic_wire_fee = forms.DecimalField(initial=fee_defaults['domestic_wire_fee'])
+    #fee_schedule = forms.DecimalField(initial=fee_defaults['fee_schedule'])
     increment = forms.IntegerField(initial=fee_defaults['increment'])
     
 
@@ -209,13 +210,14 @@ def home(request):
     increment = 1
     
     if fields_set:
-        form = FeeSelectorSimple(request.GET)
+        form = IncrementSelector(request.GET)
     else:
-        form = FeeSelectorSimple()
+        form = IncrementSelector()
     
     if form.is_valid():
         cleaned_data = form.clean()
-        fee_schedule = cleaned_data['fee_schedule']
+        #fee_schedule = cleaned_data['fee_schedule']
+        increment = cleaned_data['increment']
         
     most_recent_ticker_queryset = TickerHistory.objects.exclude(cb_buy_value=None).order_by('id').reverse()[:1]
     most_recent_ticker = most_recent_ticker_queryset[0]
@@ -266,16 +268,16 @@ def historical(request):
     increment = fee_defaults['increment']
             
     if fields_set:
-        form = FeeSelector(request.GET)
+        form = IncrementSelector(request.GET)
     else:
-        form = FeeSelector()
+        form = IncrementSelector()
     
     if form.is_valid():
         cleaned_data = form.clean()
-        business_days_delay = cleaned_data['business_days_delay']
-        foreign_wire_fee = cleaned_data['foreign_wire_fee']
-        domestic_wire_fee = cleaned_data['domestic_wire_fee']
-        fee_schedule = cleaned_data['fee_schedule']
+        #business_days_delay = cleaned_data['business_days_delay']
+        #foreign_wire_fee = cleaned_data['foreign_wire_fee']
+        #domestic_wire_fee = cleaned_data['domestic_wire_fee']
+        #fee_schedule = cleaned_data['fee_schedule']
         increment = cleaned_data['increment']
         
     env = _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fee_schedule, increment)
