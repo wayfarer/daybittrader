@@ -212,7 +212,7 @@ def home(request):
     if fields_set:
         form = IncrementSelector(request.GET)
     else:
-        form = IncrementSelector()
+        form = IncrementSelector(initial={'increment': increment})
     
     if form.is_valid():
         cleaned_data = form.clean()
