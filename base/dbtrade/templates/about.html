@@ -6,6 +6,7 @@
 <div class="row">
 	<div class="col-md-1"></div>
 	<div class="col-md-10">
+		<p>&nbsp;</p>
 		<p>On March 5th, 2014, I quietly pushed the site live. I didn't make any announcements, didn't attempt to promote it.
 			I just want to see who uses it.  Before, where there were only a few charts and some subtle philisophical statements,
 			there was suddenly a complete login system wrapped entirely with Coinbase authentication.</p>
@@ -17,12 +18,14 @@
 		<p>DayBitTrader is my humble contribution. It is some of my best work, and I am very proud of it.
 			It is, quite simply, a smarter way to trade using Coinbase.</p>
 		<p>&nbsp;</p>
+		{% if not request.user.is_authenticated %}
 		<h3>Here's a glimpse of what's inside:</h3>
 		<p><img src="{{ STATIC_URL }}images/about-example.jpg" alt="DayBitTrader"></p>
 		<h3>Try it yourself:</h3>
 		<p style="text-align:center;">
 			<a style="font-size:30px;" href="/login/coinbase/" class="btn btn-primary">Log in with Coinbase</a>
 		</p>
+		{% endif %}
 	</div>
 	<div class="col-md-1"></div>
 </div>
