@@ -63,6 +63,34 @@ class TradeForm(forms.ModelForm):
         this_timedelta = timedelta(**deltakwargs)
         self.instance.date_expire = datetime.utcnow() + this_timedelta
         super(TradeForm, self).save(*args, **kwargs)
+        
+        
+def pretty_timedelta(t):
+    try:
+        minutes = t.seconds / 60
+        hours = minutes / 60
+        if t < timedelta(days=1):
+            if t < timedelta(hours=1):
+                if t < timedelta(minutes=1):
+                    t_pretty = '%d seconds' % t.seconds
+                else:
+                    t_pretty = '%d minutes' % minutes
+            else:
+                t_pretty = '%d hours' % hours
+        elif t < timedelta(days=2):
+            if hours < 1:
+                hours_str = ''
+            elif hours < 2:
+                hours_str = ' 1 hour'
+            else:
+                hours_str = ' %d hours' % hours
+            t_pretty = '1 day%s' % hours_str
+        else:
+            t_pretty = '%d days' % t.days
+        return t_pretty
+    except:
+        #: If this every happens we know there's a problem with the above procedure.
+        return '%d seconds' % t.total_seconds()
 
 
 def trade(request, trade_type):
@@ -124,6 +152,8 @@ def trade(request, trade_type):
     current_trades = TradeOrder.objects.filter(user=request.user, active=True)
     trades_data = []
     for trade in current_trades:
+        till_expire = trade.date_expire - now()
+        till_expire_pretty = pretty_timedelta(till_expire)
         trade_data = {
                       'type': trade.type,
                       'uuid': trade.uuid,
@@ -131,7 +161,10 @@ def trade(request, trade_type):
                       'price_point': '%.2f' % trade.price_point,
                       'btc_amount': float(trade.btc_amount),#:converting to float strips zeros from right side
                       'cost': '%.2f' % (trade.btc_amount * trade.price_point),
-                      'expired': trade.date_expire < now()
+                      'expired': trade.date_expire < now(),
+                      'expires': trade.date_expire,
+                      'till_expire': till_expire,
+                      'till_expire_pretty': till_expire_pretty
                       }
         trades_data.append(trade_data)
     

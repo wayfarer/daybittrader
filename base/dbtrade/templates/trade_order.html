@@ -10,6 +10,9 @@
 		{% if trade.expired %}<strong style="color:red">EXPIRED</strong>{% endif %}
 		<a href="?remove={{ trade.uuid }}" title="{% if trade.expired %}Remove{% else %}Cancel{% endif %}"
 		{% if not trade.expired %} onclick="return confirm('Are you sure you want to cancel this trade?')"{% endif %}><span class="glyphicon glyphicon-remove-circle pull-right"></span></a>
+		{% if not trade.expired %}
+		<span class="pull-right" title="{{ trade.expires }}">Expires: {{ trade.till_expire_pretty }}</span>
+		{% endif %}
 	</li>
 {% endfor %}
 </ul>
