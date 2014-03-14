@@ -152,6 +152,7 @@ a.navbar-brand:hover #sun {
 }
 
 .trade-room-promo {
+	visibility: hidden;
 	padding: 20px 30px;
 	text-align: center;
 	font-size: 20px;
