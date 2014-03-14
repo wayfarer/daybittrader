@@ -7,12 +7,12 @@
 <ul class="trade-list">
 {% for trade in trades %}
 	<li class="trade-{{ trade.type }}"><strong>{{ trade.type }}</strong>: {{ trade.btc_amount }} BTC - ${{ trade.price_point }} (${{ trade.cost }})
-		{% if trade.expired %}<strong style="color:red">EXPIRED</strong>{% endif %}
 		<a href="?remove={{ trade.uuid }}" title="{% if trade.expired %}Remove{% else %}Cancel{% endif %}"
 		{% if not trade.expired %} onclick="return confirm('Are you sure you want to cancel this trade?')"{% endif %}><span class="glyphicon glyphicon-remove-circle pull-right"></span></a>
 		{% if not trade.expired %}
-		<small class="pull-right" title="{{ trade.expires }}">Expires:&nbsp;{{ trade.till_expire_pretty }}&nbsp;</small>
+		<small class="pull-right expires" title="{{ trade.expires }}">Expires:&nbsp;{{ trade.till_expire_pretty }}&nbsp;</small>
 		{% endif %}
+		{% if trade.expired %}<strong class="pull-right expired">EXPIRED&nbsp;</strong>{% endif %}
 	</li>
 {% endfor %}
 </ul>

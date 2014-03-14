@@ -114,6 +114,14 @@ a.navbar-brand:hover #sun {
 	list-style: none;
 }
 
+.trade-list .expires {
+	line-height: 175%;
+}
+
+.trade-list .expired {
+	color: red;
+}
+
 .trade-BUY, .trade-SELL, .trade-STOP_LOSS {
 	border-radius: 4px;
 	padding: 2px;
