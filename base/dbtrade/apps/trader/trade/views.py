@@ -86,7 +86,10 @@ def pretty_timedelta(t):
                 hours_str = ' %d hours' % hours
             t_pretty = '1 day%s' % hours_str
         else:
-            t_pretty = '%d days' % t.days
+            days = t.days
+            if hours > 12:
+                days += 1
+            t_pretty = '%d days' % days
         return t_pretty
     except:
         #: If this every happens we know there's a problem with the above procedure.
