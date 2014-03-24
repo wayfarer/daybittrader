@@ -220,7 +220,7 @@ def home(request):
     if form.is_valid():
         cleaned_data = form.clean()
         #fee_schedule = cleaned_data['fee_schedule']
-        increment = cleaned_data['increment']
+        increment = int(cleaned_data['increment'])
         
     most_recent_ticker_queryset = TickerHistory.objects.exclude(cb_buy_value=None).order_by('id').reverse()[:1]
     most_recent_ticker = most_recent_ticker_queryset[0]
