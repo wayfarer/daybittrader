@@ -12,7 +12,7 @@
 		{% if not trade.expired %}
 		<small class="pull-right expires" title="{{ trade.expires }}">Expires:&nbsp;{{ trade.till_expire_pretty }}&nbsp;</small>
 		{% endif %}
-		{% if trade.expired %}<strong class="pull-right expired">EXPIRED&nbsp;</strong>{% endif %}
+		{% if trade.expired %}<strong class="pull-right expired" title="{{ trade.expires }}">EXPIRED&nbsp;</strong>{% endif %}
 	</li>
 {% endfor %}
 </ul>
