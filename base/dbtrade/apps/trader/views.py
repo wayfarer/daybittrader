@@ -33,6 +33,7 @@ fee_defaults = {
 #class IncrementSelectorSimple(forms.Form):
 #    fee_schedule = forms.DecimalField(initial=fee_defaults['fee_schedule'])
 
+INCREMENT_CHOICES = ((1, '1'), (50, '50'))
 
 #: replaces FeeSelector form:
 class IncrementSelector(forms.Form):
@@ -40,7 +41,9 @@ class IncrementSelector(forms.Form):
     #foreign_wire_fee = forms.DecimalField(initial=fee_defaults['foreign_wire_fee'])
     #domestic_wire_fee = forms.DecimalField(initial=fee_defaults['domestic_wire_fee'])
     #fee_schedule = forms.DecimalField(initial=fee_defaults['fee_schedule'])
-    increment = forms.IntegerField(initial=fee_defaults['increment'])
+    #increment = forms.IntegerField(initial=fee_defaults['increment'])
+    increment = forms.ChoiceField(widget=forms.RadioSelect, choices=INCREMENT_CHOICES,
+                                  initial=fee_defaults['increment'])
     
 
 def _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fee_schedule, increment):
