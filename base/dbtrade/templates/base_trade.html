@@ -40,7 +40,9 @@
 		<ul class="recent-trades trade-list">
 			{% for trade in recent_trades %}
 			<li class="trade-{{ trade.type }} trade-{{ trade.completion_status }}"><strong>{{ trade.type }}</strong>
-				{{ trade.btc_amount }} BTC at ${{ trade.most_recent_log.price_point }}</li>
+				{{ trade.btc_amount }} BTC at ${{ trade.most_recent_log.price_point }}
+				<span class="pull-right">{{ trade.most_recent_log.date_added }}</span>
+			</li>
 			{% endfor %}
 		</ul>
 	</div>
