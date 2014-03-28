@@ -25,7 +25,8 @@ def home(request):
     
     env = {
            'bitstamp_price': ticker.bs_last,
-           'heading': 'Latest Bitstamp Trades'
+           'heading': 'Latest Bitstamp Trades',
+           'recent_trades': get_recent_trades(request.user)
            }
     return render_to_response(template, RequestContext(request, env))
 
