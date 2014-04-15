@@ -231,6 +231,7 @@ def home(request):
     env['feeform'] = form
     env['profit_name'] = 'Difference'
     env['50_usd'] = '%.6f' % usd_50
+    env['hide_top_login'] = True
     return auth_login(request, template_name='home.html', extra_context=env)
 
 
