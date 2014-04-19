@@ -282,7 +282,7 @@ def historical(request):
         #foreign_wire_fee = cleaned_data['foreign_wire_fee']
         #domestic_wire_fee = cleaned_data['domestic_wire_fee']
         #fee_schedule = cleaned_data['fee_schedule']
-        increment = cleaned_data['increment']
+        increment = int(cleaned_data['increment'])
         
     env = _get_chart_data(business_days_delay, foreign_wire_fee, domestic_wire_fee, fee_schedule, increment)
     env['form'] = form
