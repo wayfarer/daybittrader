@@ -36,6 +36,9 @@
 		Free!
 		<a href="/connect/coinbase/" class="btn btn-primary"> Log in with Coinbase</a> &nbsp;
 		<small><a href="/login/coinbase/">What is this?</a></small>
+		<a class="heartbleed-safe" href="https://filippo.io/Heartbleed/#daybittrader.com" target="_blank">
+			<img src="{{ STATIC_URL }}images/heartbleed-icon.png" alt="heartbleed"> Heartbleed Safe
+		</a>
 	</div>
 </div>
 <!--<div class="col-md-12" id="daily-chart" style="height: 300px;"></div>-->
@@ -44,7 +47,8 @@
 <div class="col-md-4"></div>
 <div class="col-md-4">
 	<p>&nbsp;</p>
-	<p>A leader is best when people barely know he exists, when his work is done, his aim fulfilled, they will say: we did it ourselves.</p>
+	<p>A leader is best when people barely know he exists, when his work is done, his aim fulfilled, they will say:
+		we did it ourselves.</p>
 <form method="post" action="/" id="login-form">
 	<h1>Log In</h1>
 	{% csrf_token %}

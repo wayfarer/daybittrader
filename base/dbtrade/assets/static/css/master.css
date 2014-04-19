@@ -162,3 +162,12 @@ a.navbar-brand:hover #sun {
 	margin: 10px;
 	border-radius: 10px;
 }
+
+a.heartbleed-safe {
+	font-weight: bold;
+	color: green;
+}
+
+a.heartbleed-safe img {
+	vertical-align: middle;
+}
